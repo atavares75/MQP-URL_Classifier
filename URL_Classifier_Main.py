@@ -7,6 +7,7 @@ import sklearn.feature_extraction
 import sklearn.feature_selection
 import sklearn.model_selection
 from sklearn import metrics
+from sklearn.svm import LinearSVC
 
 url_data = pd.read_csv("all_data_labeled.csv")
 
@@ -27,6 +28,8 @@ input = extractLexicalFeatures(urls)
 output = url_data['label']
 
 xTrain, xTest, yTrain, yTest = train_test_split(input, output, test_size = 0.25, random_state = 2)
+
+svm = LinearSVC()
 
 
 
