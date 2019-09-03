@@ -7,6 +7,7 @@ from FeatureExtraction import extractLexicalFeatures
 
 # Read in csv
 dataset = pd.read_csv("data/all_data_labeled.csv")
+dataset = pd.read_csv('data\\all_data_labeled.csv')
 
 # Store URLs and their labels
 urls = dataset.iloc[:, 2].values
