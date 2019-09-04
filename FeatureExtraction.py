@@ -78,11 +78,7 @@ def checkPath(path, features):
 
 def checkForIPAddress(url):
     regex = re.findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})$', url)
-    if regex is not None:
-        return 1
-    else:
-        return 0
-
+    return 1 if regex is not None else 0
 
 def checkHexBasedHost(url):
     try:
@@ -93,11 +89,10 @@ def checkHexBasedHost(url):
 
 
 def checkForDigits(url):
-    i = 0
     for c in url:
         if c.isdigit():
-            i = i + 1
-    return i
+            return 1
+    return 0
 
 # extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
 
