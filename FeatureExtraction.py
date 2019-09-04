@@ -3,15 +3,15 @@ import itertools
 def extractLexicalFeatures(urls):
     features = list()
     i = 0
-    for u in urls:
+    for url in urls:
         i = i + 1
-        url = str(u)
         data_point = list()
         if type(url) is str:
             data_point.append(len(url))
-            data_point.append(len(url.split('/')[0]))
-            data_point.append(len(url.split('.')) - 1)
+            data_point.append(countCharacterInString('.', url))
+            data_point.append(countCharacterInString('@', url))
             (protocol, host, path) = tokenizeURL(url)
+            data_point.append(len(path))
             checkHostName(host, data_point)
             checkPath(path, data_point)
         else:
@@ -41,11 +41,22 @@ def checkForCharacter(character, string):
 def countCharacterInString(character, string):
     return sum(map(lambda x: 1 if character in x else 0, string))
 
+def lengthHost(host):
+    return len(host)
+
+def lengthPath(path):
+    return len(path)
+
 def checkHostName(host, features):
     # '-' in host
     features.append(checkForCharacter('-', host))
     # digits in host
     features.append(sum(c.isdigit() for c in host))
+    # length of host
+    features.append(lengthHost(host))
+    # number of '.' in host
+    features.append(countCharacterInString('.',host))
+
     #IP based host
 
     #Hex based host
@@ -57,6 +68,8 @@ def checkPath(path, features):
     features.append(countCharacterInString(';', path))
     features.append(countCharacterInString(',', path))
     features.append(countCharacterInString('-', path))
+    features.append(countCharacterInString('.', path))
+    features.append(lengthPath(path))
 
 #extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
 
