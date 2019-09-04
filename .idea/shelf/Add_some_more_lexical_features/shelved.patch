@@ -1,0 +1,16 @@
+Index: RandomForestModel.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># Robert Dwan\n\nimport numpy as np\nimport pandas as pd\nfrom sklearn.ensemble import RandomForestClassifier\nfrom FeatureExtraction import extractLexicalFeatures\n\n# Read in csv\ndataset = pd.read_csv('data/all_data_labeled.csv')\n\n# Store URLs and their labels\nurls = dataset.iloc[:, 2].values\nlabels = dataset.iloc[:, 1].values\n\n# Extract some lexical features\nfeatures = extractLexicalFeatures(urls)\n\n#Convert to numpy arrays\nfeature = np.asarray(features)\nls = np.asarray(labels)\n\nfrom sklearn.model_selection import train_test_split\nfeature_train, feature_test, label_train, label_test = train_test_split(feature, ls, test_size=0.25, random_state=2)\n\n#create the classifier and tune the parameters (more on the documentations)\nrf = RandomForestClassifier(n_estimators= 25, max_depth= None,max_features = 0.4,random_state= 11 )\n\n#fit the data\nrf.fit(feature_train, label_train)\n\n#make the prediction on the unseen data\nprediction = rf.predict(feature_test) \n\n\n# Statistics for the model\nfrom sklearn.metrics import classification_report, confusion_matrix, accuracy_score\n\nprint(confusion_matrix(label_test, prediction))\nprint(classification_report(label_test, prediction))\nprint(accuracy_score(label_test, prediction))\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- RandomForestModel.py	(date 1567622415000)
++++ RandomForestModel.py	(date 1567622461042)
+@@ -1,5 +1,6 @@
+ # Robert Dwan
+ 
++
+ import numpy as np
+ import pandas as pd
+ from sklearn.ensemble import RandomForestClassifier
