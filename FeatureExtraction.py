@@ -1,4 +1,5 @@
-import itertools
+import re
+
 
 def extractLexicalFeatures(urls):
     features = list()
@@ -7,7 +8,7 @@ def extractLexicalFeatures(urls):
         i = i + 1
         data_point = list()
         if type(url) is str:
-            data_point.append(len(url))
+            data_point.append(checkLength(url))
             data_point.append(countCharacterInString('.', url))
             data_point.append(countCharacterInString('@', url))
             (protocol, host, path) = tokenizeURL(url)
@@ -20,6 +21,7 @@ def extractLexicalFeatures(urls):
         features.append(data_point)
     return features
 
+
 def tokenizeURL(url):
     tokens = url.partition('://')
     if len(tokens[1]) == 0:
@@ -31,35 +33,37 @@ def tokenizeURL(url):
         host_path = tokens[2].partition('/')
 
     host = host_path[0]
-    path = '/'+host_path[2]
+    path = '/' + host_path[2]
 
     return protocol, host, path
+
 
 def checkForCharacter(character, string):
     return 1 if character in string else 0
 
+
 def countCharacterInString(character, string):
     return sum(map(lambda x: 1 if character in x else 0, string))
 
-def lengthHost(host):
-    return len(host)
 
-def lengthPath(path):
-    return len(path)
+def checkLength(url):
+    return len(url)
+
 
 def checkHostName(host, features):
     # '-' in host
     features.append(checkForCharacter('-', host))
     # digits in host
-    features.append(sum(c.isdigit() for c in host))
+    features.append(checkForDigits(host))
     # length of host
-    features.append(lengthHost(host))
+    features.append(checkLength(host))
     # number of '.' in host
-    features.append(countCharacterInString('.',host))
+    features.append(countCharacterInString('.', host))
+    # IP based host
+    features.append(checkForIPAddress(host))
+    # Hex based host
+    features.append(checkHexBasedHost(host))
 
-    #IP based host
-
-    #Hex based host
 
 def checkPath(path, features):
     features.append(countCharacterInString('-', path))
@@ -69,8 +73,33 @@ def checkPath(path, features):
     features.append(countCharacterInString(',', path))
     features.append(countCharacterInString('-', path))
     features.append(countCharacterInString('.', path))
-    features.append(lengthPath(path))
+    features.append(checkLength(path))
 
-#extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
 
-#tokenizeURL('http://www.goog-le.com/about')
+def checkForIPAddress(url):
+    regex = re.findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})$', url)
+    if regex is not None:
+        return 1
+    else:
+        return 0
+
+
+def checkHexBasedHost(url):
+    try:
+        int(url, 16)
+        return True
+    except ValueError:
+        return False
+
+
+def checkForDigits(url):
+    i = 0
+    for c in url:
+        if c.isdigit():
+            i = i + 1
+    return i
+
+# extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
+
+# tokenizeURL('http://www.goog-le.com/about')
+# print(checkForIPAdress('https://www.2345.3453.222.3454.com/about'))

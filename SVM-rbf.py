@@ -19,7 +19,7 @@ ls = np.asarray(labels)
 
 xTrain, xTest, yTrain, yTest = train_test_split(feature, ls, test_size=0.6, random_state=11)
 
-svm = SVC(kernel='rbf', gamma='auto', max_iter=10000, C=1)
+svm = SVC(kernel='rbf', gamma='auto', max_iter=50000, C=1)
 
 svm.fit(xTrain, yTrain)
 
