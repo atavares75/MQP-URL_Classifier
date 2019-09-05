@@ -20,10 +20,10 @@ feature = np.asarray(features)
 ls = np.asarray(labels)
 
 from sklearn.model_selection import train_test_split
-feature_train, feature_test, label_train, label_test = train_test_split(feature, ls, test_size=0.25, random_state=2)
+feature_train, feature_test, label_train, label_test = train_test_split(feature, ls, test_size=0.20, random_state=1436)
 
 #create the classifier and tune the parameters (more on the documentations)
-rf = RandomForestClassifier(n_estimators= 25, max_depth= None,max_features = 0.4,random_state= 11 )
+rf = RandomForestClassifier(n_estimators= 25, max_depth= None,max_features = 0.4,random_state= 11)
 
 #fit the data
 rf.fit(feature_train, label_train)
