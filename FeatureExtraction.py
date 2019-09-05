@@ -1,4 +1,7 @@
 import re
+from collections import Counter
+import numpy as np
+from urllib.parse import urlparse
 
 
 def extractLexicalFeatures(urls):
@@ -9,9 +12,16 @@ def extractLexicalFeatures(urls):
         data_point = list()
         if type(url) is str:
             data_point.append(checkLength(url))
-            data_point.append(countCharacterInString('.', url))
+            #data_point.append(countCharacterInString('.', url))
             data_point.append(countCharacterInString('@', url))
-            (protocol, host, path) = tokenizeURL(url)
+            url = checkURLScheme(url)
+            parseResults = urlparse(url)
+            data_point.append(checkForParams(parseResults))
+            data_point.append(checkForQueries(parseResults))
+            data_point.append(checkForFragments(parseResults))
+            data_point.append(calculateEntropyOfDomainName(parseResults.netloc))
+            path = parseResults.path
+            host = parseResults.netloc
             data_point.append(len(path))
             checkHostName(host, data_point)
             checkPath(path, data_point)
@@ -22,20 +32,13 @@ def extractLexicalFeatures(urls):
     return features
 
 
-def tokenizeURL(url):
+def checkURLScheme(url):
     tokens = url.partition('://')
     if len(tokens[1]) == 0:
         # no protocol in front of url
-        protocol = ''
-        host_path = tokens[0].partition('/')
+        return '//' + url
     else:
-        protocol = tokens[0]
-        host_path = tokens[2].partition('/')
-
-    host = host_path[0]
-    path = '/' + host_path[2]
-
-    return protocol, host, path
+        return url
 
 
 def checkForCharacter(character, string):
@@ -48,6 +51,32 @@ def countCharacterInString(character, string):
 
 def checkLength(url):
     return len(url)
+
+
+def checkNonStandardPort(netloc):
+    port = netloc.rpartition()[2]
+    standardPorts = ['80', '443', '8080']
+    print(port)
+    if len(port) > 0:
+        if port in standardPorts:
+            return 1
+        else:
+            return 0
+    else:
+        return 0
+
+
+
+def checkForFragments(parsed_url):
+    return 1 if len(parsed_url.fragment) > 0 else 0
+
+
+def checkForQueries(parsed_url):
+    return 1 if len(parsed_url.query) > 0 else 0
+
+
+def checkForParams(parsed_url):
+    return 1 if len(parsed_url.params) > 0 else 0
 
 
 def checkHostName(host, features):
@@ -66,39 +95,46 @@ def checkHostName(host, features):
     # Is TLD common
     features.append(checkTLD(host))
 
+
 def checkTLD(hostname):
     popularTLDs = ['com', 'net', 'gov', 'edu', 'org']
     tokens = hostname.rpartition('.')
     return 0 if tokens[2] in popularTLDs else 1
 
 
-
 def checkPath(path, features):
     features.append(countCharacterInString('-', path))
     features.append(countCharacterInString('/', path))
-    features.append(countCharacterInString('=', path))
+    # features.append(countCharacterInString('=', path))
     features.append(countCharacterInString(';', path))
     features.append(countCharacterInString(',', path))
     features.append(countCharacterInString('-', path))
     features.append(countCharacterInString('.', path))
     features.append(checkLength(path))
-    features.append(countCharacterInString('?', path))
-    features.append(countCharacterInString('&', path))
-    features.append(checkForUsernameOrPassword(path))
+    # features.append(countCharacterInString('?', path))
+    # features.append(countCharacterInString('&', path))
+    # features.append(checkForUsernameOrPassword(path))
 
 
 def checkForIPAddress(url):
     regex = re.findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})$', url)
     return 1 if regex is not None else 0
 
+
 def checkForUsernameOrPassword(path):
     lowerPath = path.lower()
     i = 0
     if 'username' in lowerPath:
-        i=i+1
+        i = i + 1
     if 'password' in lowerPath:
-        i=i+1
+        i = i + 1
     return i
+
+
+def calculateEntropyOfDomainName(host):
+    p, lengths = Counter(host), np.float(len(host))
+    return -sum(count / lengths * np.log2(count / lengths) for count in p.values())
+
 
 def checkHexBasedHost(url):
     try:
@@ -114,6 +150,7 @@ def checkForDigits(url):
             return 1
     return 0
 
-# extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
-# tokenizeURL('http://www.goog-le.com/about')
+# For Testing functions:
+extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
+# getURLScheme('https://www.goog-le.com/about')
 # print(checkForIPAdress('https://www.2345.3453.222.3454.com/about'))
