@@ -22,21 +22,13 @@ xTrain, xTest, yTrain, yTest = train_test_split(feature, ls, test_size=0.5, rand
 
 svm = LinearSVC(dual=False, fit_intercept=False, max_iter=1700, C=1)
 
-selector = RFECV(svm, step=1, cv=5)
-selector = selector.fit(xTrain, yTrain)
-e = selector.support_
 
-#svm.fit(xTrain, yTrain)
+svm.fit(xTrain, yTrain)
 
 prediction = svm.predict(xTest)
 
-sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
-thresh = sel.fit_transform(feature)
 
 print(confusion_matrix(yTest, prediction))
 print(classification_report(yTest, prediction))
 print(accuracy_score(yTest, prediction))
-
-print(feature[0])
-print(thresh[0])
 

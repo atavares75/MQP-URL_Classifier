@@ -1,6 +1,6 @@
+import math
 import re
 from collections import Counter
-import numpy as np
 from urllib.parse import urlparse
 
 
@@ -13,7 +13,7 @@ def extractLexicalFeatures(urls):
         if type(url) is str:
             data_point.append(checkLength(url))
             data_point.append(countCharacterInString('.', url))
-            # data_point.append(countCharacterInString('@', url))
+            data_point.append(countCharacterInString('@', url))
             url = checkURLScheme(url)
             parseResults = urlparse(url)
             data_point.append(checkForParams(parseResults))
@@ -23,7 +23,6 @@ def extractLexicalFeatures(urls):
             data_point.append(checkNonStandardPort(parseResults.netloc))
             path = parseResults.path
             host = parseResults.netloc
-            data_point.append(len(path))  # 9
             checkHostName(host, data_point)
             checkPath(path, data_point)
         else:
@@ -35,7 +34,7 @@ def extractLexicalFeatures(urls):
 
 def checkHostName(host, features):
     # '-' in host
-    # features.append(checkForCharacter('-', host))
+    features.append(checkForCharacter('-', host))
     # digits in host
     features.append(checkForDigits(host))
     # length of host
@@ -43,7 +42,7 @@ def checkHostName(host, features):
     # number of '.' in host
     features.append(countCharacterInString('.', host))
     # IP based host
-    features.append(checkForIPAddress(host))
+    # features.append(checkForIPAddress(host))
     # Hex based host
     features.append(checkHexBasedHost(host))
     # Is TLD common
@@ -51,17 +50,17 @@ def checkHostName(host, features):
 
 
 def checkPath(path, features):
-    features.append(countCharacterInString('-', path))  # 17
-    features.append(countCharacterInString('/', path))
-    # features.append(countCharacterInString('=', path))
-    # features.append(countCharacterInString(';', path))
-    # features.append(countCharacterInString(',', path))
+    # features.append(countCharacterInString('-', path))
+    features.append(countCharacterInString('/', path))  # 15
+    features.append(countCharacterInString('=', path))
+    features.append(countCharacterInString(';', path))
+    features.append(countCharacterInString(',', path))
     features.append(countCharacterInString('-', path))
     features.append(countCharacterInString('.', path))
     features.append(checkLength(path))
     # features.append(countCharacterInString('?', path))
-    # features.append(countCharacterInString('&', path))
-    # features.append(checkForUsernameOrPassword(path))
+    features.append(countCharacterInString('&', path))
+    features.append(checkForUsernameOrPassword(path))
 
 
 def checkURLScheme(url):
@@ -131,8 +130,8 @@ def checkForUsernameOrPassword(path):
 
 
 def calculateEntropyOfDomainName(host):
-    p, lengths = Counter(host), np.float(len(host))
-    return -sum(count / lengths * np.log2(count / lengths) for count in p.values())
+    p, lengths = Counter(host), float(len(host))
+    return -sum(count / lengths * math.log2(count / lengths) for count in p.values())
 
 
 def checkHexBasedHost(url):

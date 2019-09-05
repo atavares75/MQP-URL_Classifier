@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_selection import VarianceThreshold
+from sklearn.feature_selection import VarianceThreshold, RFECV
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from FeatureExtraction import extractLexicalFeatures
@@ -27,6 +27,13 @@ feature_train, feature_test, label_train, label_test = train_test_split(feature,
 
 #create the classifier and tune the parameters (more on the documentations)
 rf = RandomForestClassifier(n_estimators= 25, max_depth= None,max_features = 0.4,random_state= 11)
+
+selector = RFECV(rf, step=1, cv=5)
+selector = selector.fit(feature_train, label_train)
+e = selector.support_
+f = selector.score(feature_train, label_train)
+print(e)
+print(f)
 
 #fit the data
 rf.fit(feature_train, label_train)
