@@ -3,6 +3,9 @@
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_selection import VarianceThreshold
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from FeatureExtraction import extractLexicalFeatures
 
 # Read in csv
@@ -19,7 +22,7 @@ features = extractLexicalFeatures(urls)
 feature = np.asarray(features)
 ls = np.asarray(labels)
 
-from sklearn.model_selection import train_test_split
+
 feature_train, feature_test, label_train, label_test = train_test_split(feature, ls, test_size=0.20, random_state=1436)
 
 #create the classifier and tune the parameters (more on the documentations)
@@ -33,9 +36,14 @@ prediction = rf.predict(feature_test)
 
 
 # Statistics for the model
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 
 print(confusion_matrix(label_test, prediction))
 print(classification_report(label_test, prediction))
 print(accuracy_score(label_test, prediction))
+
+sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
+thresh = sel.fit_transform(feature)
+
+print(feature[0])
+print(thresh[0])
 
