@@ -1,12 +1,8 @@
-import csv
 import math
 import re
 from collections import Counter
 from urllib.parse import urlparse
-
-import pandas as pd
 import tldextract
-import idna
 from AlexaTop1MillionDict import alexaSet, alexaNameSet
 
 
@@ -169,10 +165,11 @@ def checkAlexaTop1Million(host_name):
 def checkSubDomains(host_name):
     ext = tldextract.extract(host_name)
     sub_domains = ext.subdomain.split('.')
+    numBrandNames = 0
     for sub in sub_domains:
         if sub in alexaNameSet:
-            return 1
-    return 0
+            numBrandNames = numBrandNames + 1
+    return numBrandNames
 
 
 def checkForPunycode(host):
@@ -181,7 +178,6 @@ def checkForPunycode(host):
             print('Non ASCII: ' + host)
             return 1
     return 0
-
 
 # For Testing functions:
 # extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
