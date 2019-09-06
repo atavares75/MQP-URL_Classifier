@@ -30,4 +30,3 @@ print(confusion_matrix(yTest, prediction))
 print(classification_report(yTest, prediction))
 print(accuracy_score(yTest, prediction))
 
-
