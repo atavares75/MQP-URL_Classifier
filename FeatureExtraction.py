@@ -1,13 +1,19 @@
+import csv
 import math
 import re
 from collections import Counter
 from urllib.parse import urlparse
 
+import pandas as pd
+import tldextract
+import idna
+from AlexaTop1MillionDict import alexaSet, alexaNameSet
 
-def extractLexicalFeatures(urls):
+
+def extractLexicalFeatures(url_list):
     features = list()
     i = 0
-    for url in urls:
+    for url in url_list:
         i = i + 1
         data_point = list()
         if type(url) is str:
@@ -21,6 +27,9 @@ def extractLexicalFeatures(urls):
             data_point.append(checkForFragments(parseResults))
             data_point.append(calculateEntropyOfDomainName(parseResults.netloc))
             data_point.append(checkNonStandardPort(parseResults.netloc))
+            data_point.append(checkAlexaTop1Million(parseResults.netloc))
+            data_point.append(checkForPunycode(parseResults.netloc))
+            data_point.append(checkSubDomains(parseResults.netloc))
             path = parseResults.path
             host = parseResults.netloc
             checkHostName(host, data_point)
@@ -42,7 +51,7 @@ def checkHostName(host, features):
     # number of '.' in host
     features.append(countCharacterInString('.', host))
     # IP based host
-    # features.append(checkForIPAddress(host))
+    features.append(checkForIPAddress(host))  # optimal
     # Hex based host
     features.append(checkHexBasedHost(host))
     # Is TLD common
@@ -50,7 +59,7 @@ def checkHostName(host, features):
 
 
 def checkPath(path, features):
-    # features.append(countCharacterInString('-', path))
+    features.append(countCharacterInString('-', path))  # optimal
     features.append(countCharacterInString('/', path))  # 15
     features.append(countCharacterInString('=', path))
     features.append(countCharacterInString(';', path))
@@ -58,7 +67,7 @@ def checkPath(path, features):
     features.append(countCharacterInString('-', path))
     features.append(countCharacterInString('.', path))
     features.append(checkLength(path))
-    # features.append(countCharacterInString('?', path))
+    # features.append(countCharacterInString('?', path)) # optimal
     features.append(countCharacterInString('&', path))
     features.append(checkForUsernameOrPassword(path))
 
@@ -109,9 +118,9 @@ def checkForParams(parsed_url):
 
 
 def checkTLD(hostname):
-    popularTLDs = ['com', 'net', 'gov', 'edu', 'org', 'uk']
-    tokens = hostname.rpartition('.')
-    return 0 if tokens[2] in popularTLDs else 1
+    popularTLDs = ['com', 'net', 'gov', 'edu', 'org', 'de']
+    ext = tldextract.extract(hostname)
+    return 0 if ext.domain in popularTLDs else 1
 
 
 def checkForIPAddress(url):
@@ -148,7 +157,39 @@ def checkForDigits(url):
             return 1
     return 0
 
+
+def checkAlexaTop1Million(host_name):
+    ext = tldextract.extract(host_name)
+    url = ext.domain + '.' + ext.suffix
+    if url in alexaSet:
+        return 1
+    return 0
+
+
+def checkSubDomains(host_name):
+    ext = tldextract.extract(host_name)
+    sub_domains = ext.subdomain.split('.')
+    for sub in sub_domains:
+        if sub in alexaNameSet:
+            return 1
+    return 0
+
+
+def checkForPunycode(host):
+    for c in host:
+        if not c.isascii():
+            print('Non ASCII: ' + host)
+            return 1
+    return 0
+
+
 # For Testing functions:
 # extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
 # getURLScheme('https://www.goog-le.com/about')
 # print(checkForIPAdress('https://www.2345.3453.222.3454.com/about'))
+# checkAlexaTop1Million('www.google.co.uk')
+# dataset = pd.read_csv("data/all_data_labeled.csv")
+
+# Store URLs and their labels
+# urls = dataset.iloc[:, 2].values
+# checkForPunycode(urls[1])

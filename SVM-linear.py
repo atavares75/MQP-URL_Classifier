@@ -22,6 +22,12 @@ xTrain, xTest, yTrain, yTest = train_test_split(feature, ls, test_size=0.5, rand
 
 svm = LinearSVC(dual=False, fit_intercept=False, max_iter=1700, C=1)
 
+selector = RFECV(svm, step=1, cv=5)
+selector = selector.fit(xTrain, yTrain)
+e = selector.support_
+f = selector.score(xTrain, yTrain)
+print(e)
+print(f)
 
 svm.fit(xTrain, yTrain)
 
