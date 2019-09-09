@@ -2,7 +2,10 @@ import math
 import re
 from collections import Counter
 from urllib.parse import urlparse
+import matplotlib
+import seaborn
 import tldextract
+
 from AlexaTop1MillionDict import alexaSet, alexaNameSet
 
 
@@ -165,17 +168,18 @@ def checkAlexaTop1Million(host_name):
 def checkSubDomains(host_name):
     ext = tldextract.extract(host_name)
     sub_domains = ext.subdomain.split('.')
-    numBrandNames = 0
+    # numBrandNames = 0
     for sub in sub_domains:
         if sub in alexaNameSet:
-            numBrandNames = numBrandNames + 1
-    return numBrandNames
+            # numBrandNames = numBrandNames + 1
+            return 1
+    # return numBrandNames
+    return 0
 
 
 def checkForPunycode(host):
     for c in host:
         if not c.isascii():
-            print('Non ASCII: ' + host)
             return 1
     return 0
 

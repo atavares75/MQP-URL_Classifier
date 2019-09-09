@@ -1,0 +1,12 @@
+testing time logger
+2019-09-08 15:27:41.967501
+Algorithm Run: Random Forest
+Training Time: 8.034599999717784e-05s
+Testing Time: -0.00013514299999428658s
+
+testing time logger
+2019-09-08 19:21:20.137583
+Algorithm Run: SVM-rbf
+Training Time: -0.0008859310002833354s
+Testing Time: 1.9023000277229585e-05s
+
