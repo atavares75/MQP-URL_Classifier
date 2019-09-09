@@ -1,10 +1,10 @@
 # Robert Dwan
 
 import logging.handlers
+import os
 import sys
 import timeit
 from datetime import datetime
-
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -18,8 +18,14 @@ from VisualizeResults import visualize, evaluateFeatures
 
 algorithms = ["rf", "lr", "svm-l", "svm-rbf"]
 
-logging.basicConfig(filename='data/log/time-log.log', level=logging.INFO, format='%(message)s')
+handler0 = logging.handlers.WatchedFileHandler(
+    os.environ.get("LOGFILE", "data/log/time-log.log"))
+FORMAT0 = '%(message)s'
+formatter0 = logging.Formatter(FORMAT0)
+handler0.setFormatter(formatter0)
 time_log = logging.getLogger()
+time_log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
+time_log.addHandler(handler0)
 # Read in csv
 dataset = pd.read_csv('data/all_data_labeled.csv')
 
