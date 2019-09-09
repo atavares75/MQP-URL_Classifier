@@ -2,25 +2,59 @@ import math
 import re
 from collections import Counter
 from urllib.parse import urlparse
-import matplotlib
-import seaborn
+
 import tldextract
+from pandas import DataFrame
 
 from AlexaTop1MillionDict import alexaSet, alexaNameSet
 
+FeatureList = ['Length of URL',
+               'Number of ‘.’ In URL',
+               'Number of ‘@‘ in URL',
+               'Params in URL',
+               'Queries in URL',
+               'Fragments in URL',
+               'Entropy of Domain name',
+               'Check for Non Standard port',
+               'Domain name in Alexa Top 1 Million',
+               'Check for non-ascii characters',
+               'Check for popular domains in subdomains',
+               '’-‘ in domain name',
+               'Digits in domain name',
+               'Length of host',
+               'Number of ‘.’ in domain name',
+               'IP based host name',
+               'Hex based host name',
+               'Check for common TLD',
+               'Length of path',
+               'Count ‘-‘ in path',
+               'Count ‘/‘ in path',
+               'Count ‘=‘ in path',
+               'Count ‘;‘ in path',
+               'Count ‘,‘ in path',
+               'Count ‘_‘ in path',
+               'Count ‘.’ in path',
+               'Count ‘?’ in path',
+               'Count ‘&’ in path',
+               'Username and Password in path']
+
 
 def extractLexicalFeatures(url_list):
-    features = list()
+    features = DataFrame(columns=FeatureList)
     i = 0
     for url in url_list:
         i = i + 1
         data_point = list()
         if type(url) is str:
+            # parsing of URL:
+            url = checkURLScheme(url)
+            parseResults = urlparse(url)
+            path = parseResults.path
+            host = parseResults.netloc
+            # Extraction of features:
             data_point.append(checkLength(url))
             data_point.append(countCharacterInString('.', url))
             data_point.append(countCharacterInString('@', url))
-            url = checkURLScheme(url)
-            parseResults = urlparse(url)
             data_point.append(checkForParams(parseResults))
             data_point.append(checkForQueries(parseResults))
             data_point.append(checkForFragments(parseResults))
@@ -29,46 +63,36 @@ def extractLexicalFeatures(url_list):
             data_point.append(checkAlexaTop1Million(parseResults.netloc))
             data_point.append(checkForPunycode(parseResults.netloc))
             data_point.append(checkSubDomains(parseResults.netloc))
-            path = parseResults.path
-            host = parseResults.netloc
-            checkHostName(host, data_point)
-            checkPath(path, data_point)
+            # '-' in host
+            data_point.append(checkForCharacter('-', host))
+            # digits in host
+            data_point.append(checkForDigits(host))
+            # length of host
+            data_point.append(checkLength(host))
+            # number of '.' in host
+            data_point.append(countCharacterInString('.', host))
+            # IP based host
+            data_point.append(checkForIPAddress(host))  # optimal
+            # Hex based host
+            data_point.append(checkHexBasedHost(host))
+            # Is TLD common
+            data_point.append(checkTLD(host))
+            data_point.append(countCharacterInString('-', path))  # optimal
+            data_point.append(countCharacterInString('/', path))  # 15
+            data_point.append(countCharacterInString('=', path))
+            data_point.append(countCharacterInString(';', path))
+            data_point.append(countCharacterInString(',', path))
+            data_point.append(countCharacterInString('-', path))
+            data_point.append(countCharacterInString('.', path))
+            data_point.append(checkLength(path))
+            data_point.append(countCharacterInString('?', path))  # optimal
+            data_point.append(countCharacterInString('&', path))
+            data_point.append(checkForUsernameOrPassword(path))
         else:
             print(i)
             print(str(url))
         features.append(data_point)
     return features
-
-
-def checkHostName(host, features):
-    # '-' in host
-    features.append(checkForCharacter('-', host))
-    # digits in host
-    features.append(checkForDigits(host))
-    # length of host
-    features.append(checkLength(host))
-    # number of '.' in host
-    features.append(countCharacterInString('.', host))
-    # IP based host
-    features.append(checkForIPAddress(host))  # optimal
-    # Hex based host
-    features.append(checkHexBasedHost(host))
-    # Is TLD common
-    features.append(checkTLD(host))
-
-
-def checkPath(path, features):
-    features.append(countCharacterInString('-', path))  # optimal
-    features.append(countCharacterInString('/', path))  # 15
-    features.append(countCharacterInString('=', path))
-    features.append(countCharacterInString(';', path))
-    features.append(countCharacterInString(',', path))
-    features.append(countCharacterInString('-', path))
-    features.append(countCharacterInString('.', path))
-    features.append(checkLength(path))
-    # features.append(countCharacterInString('?', path)) # optimal
-    features.append(countCharacterInString('&', path))
-    features.append(checkForUsernameOrPassword(path))
 
 
 def checkURLScheme(url):

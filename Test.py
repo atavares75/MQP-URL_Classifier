@@ -14,7 +14,7 @@ from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
 
 from FeatureExtraction import extractLexicalFeatures
-from VisualizeResults import visualize
+from VisualizeResults import visualize, evaluateFeatures
 
 algorithms = ["rf", "lr", "svm-l", "svm-rbf"]
 
@@ -42,7 +42,7 @@ def machine_learning_algorithm(input_algorithm):
         "rf": RandomForestClassifier(n_estimators=25, max_depth=None, max_features=0.4, random_state=11),
         "lr": LogisticRegression(multi_class='multinomial', solver='lbfgs'),
         "svm-l": LinearSVC(dual=False, fit_intercept=False, max_iter=1700, C=1),
-        "svm-rbf": SVC(kernel='rbf', gamma='auto', max_iter=100000, C=1)
+        "svm-rbf": SVC(kernel='rbf', gamma='auto', max_iter=2000, C=1)
     }
     return switcher.get(input_algorithm, lambda: "Invalid Algorithm")
 
@@ -53,17 +53,21 @@ def __getAlgorithmName(abbreviation):
         return algo_dict[abbreviation]
 
 
-def train_and_test(algorithm):
+def train_and_test(algorithm, feature_selection_algorithm):
     time_log.info('testing time logger')
+
     start_training_time = timeit.timeit()
     algorithm.fit(feature_train, label_train)
     end_training_time = timeit.timeit()
+
     start_testing_time = timeit.timeit()
     prediction = algorithm.predict(feature_test)
     end_testing_time = timeit.timeit()
+
     training_time = end_training_time - start_training_time
     testing_time = end_testing_time - start_testing_time
     logging.info(datetime.now())
+
     if len(sys.argv) > 1:
         logging.info('Algorithm Run: ' + __getAlgorithmName(sys.argv[1]))
     else:
@@ -72,10 +76,11 @@ def train_and_test(algorithm):
     logging.info(message)
 
     visualize(label_test, prediction)
+    evaluateFeatures(feature_selection_algorithm, feature_train, label_train)
 
 
 if len(sys.argv) > 1:
-    train_and_test(machine_learning_algorithm(sys.argv[1]))
+    train_and_test(machine_learning_algorithm(sys.argv[1]), sys.argv[1])
 else:
     for algo in algorithms:
-        train_and_test(machine_learning_algorithm(algo))
+        train_and_test(machine_learning_algorithm(algo), algo)
