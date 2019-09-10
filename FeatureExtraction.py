@@ -40,7 +40,7 @@ FeatureList = ['Length of URL',
 
 
 def extractLexicalFeatures(url_list):
-    features = DataFrame(columns=FeatureList)
+    features = list()
     i = 0
     for url in url_list:
         i = i + 1
@@ -92,7 +92,8 @@ def extractLexicalFeatures(url_list):
             print(i)
             print(str(url))
         features.append(data_point)
-    return features
+    df = DataFrame(features, columns=FeatureList)
+    return df
 
 
 def checkURLScheme(url):

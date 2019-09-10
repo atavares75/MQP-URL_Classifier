@@ -3,8 +3,8 @@
 import logging.handlers
 import os
 import sys
-import timeit
 from datetime import datetime
+
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
@@ -23,7 +23,7 @@ handler0 = logging.handlers.WatchedFileHandler(
 FORMAT0 = '%(message)s'
 formatter0 = logging.Formatter(FORMAT0)
 handler0.setFormatter(formatter0)
-time_log = logging.getLogger()
+time_log = logging.getLogger('data/log/time-log.log')
 time_log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
 time_log.addHandler(handler0)
 # Read in csv
@@ -37,7 +37,7 @@ labels = dataset.iloc[:, 1].values
 features = extractLexicalFeatures(urls)
 
 # Convert to numpy arrays
-feature = np.asarray(features)
+feature = np.asarray(features.to_numpy())
 ls = np.asarray(labels)
 
 feature_train, feature_test, label_train, label_test = train_test_split(feature, ls, test_size=0.20, random_state=1436)
@@ -62,24 +62,24 @@ def __getAlgorithmName(abbreviation):
 def train_and_test(algorithm, feature_selection_algorithm):
     time_log.info('testing time logger')
 
-    start_training_time = timeit.timeit()
+    start_training_time = datetime.now()
     algorithm.fit(feature_train, label_train)
-    end_training_time = timeit.timeit()
+    end_training_time = datetime.now()
 
-    start_testing_time = timeit.timeit()
+    start_testing_time = datetime.now()
     prediction = algorithm.predict(feature_test)
-    end_testing_time = timeit.timeit()
+    end_testing_time = datetime.now()
 
     training_time = end_training_time - start_training_time
     testing_time = end_testing_time - start_testing_time
-    logging.info(datetime.now())
+    time_log.info(datetime.now())
 
     if len(sys.argv) > 1:
-        logging.info('Algorithm Run: ' + __getAlgorithmName(sys.argv[1]))
+        time_log.info('Algorithm Run: ' + __getAlgorithmName(sys.argv[1]))
     else:
-        logging.info('Algorithm Run: All')
-    message = 'Training Time: ' + str(training_time) + 's\n' + 'Testing Time: ' + str(testing_time) + 's\n'
-    logging.info(message)
+        time_log.info('Algorithm Run: All')
+    message = 'Training Time: ' + str(training_time) + '\n' + 'Testing Time: ' + str(testing_time) + '\n'
+    time_log.info(message)
 
     visualize(label_test, prediction)
     evaluateFeatures(feature_selection_algorithm, feature_train, label_train)
