@@ -81,7 +81,7 @@ def train_and_test(algorithm, feature_selection_algorithm):
     message = 'Training Time: ' + str(training_time) + '\n' + 'Testing Time: ' + str(testing_time) + '\n'
     time_log.info(message)
 
-    visualize(label_test, prediction)
+    visualize(label_test, prediction, feature_selection_algorithm)
     evaluateFeatures(feature_selection_algorithm, feature_train, label_train)
 
 
