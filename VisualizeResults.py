@@ -1,5 +1,7 @@
 import logging.handlers
 import os
+from datetime import datetime
+from itertools import cycle
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,7 +9,8 @@ import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_selection import RFECV
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_curve, auc
+from sklearn.preprocessing import label_binarize
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
 
@@ -64,7 +67,8 @@ FeatureList = ['Length of URL',
                'Username and Password in path']
 
 
-def visualize(label_test, prediction):
+def visualize(label_test, prediction, eval_algorithm):
+    algo = __getAlgorithmName(eval_algorithm)
     c_matrix = confusion_matrix(label_test, prediction, data_labels)
     cmtx = pd.DataFrame(
         c_matrix,
@@ -75,20 +79,25 @@ def visualize(label_test, prediction):
     )
     classif_report = classification_report(label_test, prediction)
     accuracy = accuracy_score(label_test, prediction)
+    results_log.info(datetime.now())
+    results_log.info('Algorithm Run: ' + algo)
     results_log.info(cmtx.to_string())
     results_log.info(classif_report)
     results_log.info(accuracy)
+    generateROC(label_test, prediction, eval_algorithm)
     results_log.info('\n')
 
 
 def evaluateFeatures(eval_algorithm, training_features, training_output):
-    algo = evaluation_algorithm(eval_algorithm)
-    selector = RFECV(algo, step=1, cv=5)
-    selector = selector.fit(training_features, training_output)
-    e = selector.support_
-    f = selector.score(training_features, training_output)
-    feature_log.info(e)
-    feature_log.info(f)
+    algo = __getAlgorithmName(eval_algorithm)
+    # selector = RFECV(algo, step=1, cv=5)
+    # selector = selector.fit(training_features, training_output)
+    # e = selector.support_
+    # f = selector.score(training_features, training_output)
+    # feature_log.info(datetime.now())
+    # feature_log.info(e)
+    # feature_log.info(f)
+    featureVariability(training_features)
     feature_log.info('\n')
 
 
@@ -133,17 +142,87 @@ def displayFeatureHistogram(data_set, target):
 
 
 def featureVariability(data_set):
-    featureVar = np.var(data_set.to_numpy())
-    feature_log.info(featureVar)
+    featureVar = list()
+    for i in range(len(FeatureList)):
+        feature_values = data_set[:, i].ravel()
+        featureVar.append(np.var(feature_values))
+    df = pd.DataFrame(columns=FeatureList)
+    df.loc[0] = featureVar
+    feature_log.info(df.to_string())
 
 
-dataset = pd.read_csv('data/all_data_labeled.csv')
+def __getAlgorithmName(abbreviation):
+    algo_dict = {'rf': 'Random Forest', 'lr': 'Logistic Regression', 'svm-l': 'SVM-Linear', 'svm-rbf': 'SVM-rbf'}
+    if abbreviation in algo_dict:
+        return algo_dict[abbreviation]
 
-# Store URLs and their labels
-urls = dataset.iloc[:, 2].values
-labels = dataset.iloc[:, 1].values
 
-# Extract some lexical features
-features = extractLexicalFeatures(urls)
-# displayFeatureHistogram(features, labels)
-featureVariability(features)
+def generateROC(test, score, eval_algorithm):
+    algo = __getAlgorithmName(eval_algorithm)
+    # Compute ROC curve and ROC area for each class
+    fpr = dict()
+    tpr = dict()
+    n_classes = len(data_labels)
+    roc_auc = dict()
+    y_test = label_binarize(test, classes=data_labels)
+    y_score = label_binarize(score, classes=data_labels)
+    for i in range(n_classes):
+        t = y_test[:, i]
+        fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_score[:, i])
+        roc_auc[i] = auc(fpr[i], tpr[i])
+
+    # Compute micro-average ROC curve and ROC area
+    fpr["micro"], tpr["micro"], _ = roc_curve(y_test.ravel(), y_score.ravel())
+    roc_auc["micro"] = auc(fpr["micro"], tpr["micro"])
+
+    all_fpr = np.unique(np.concatenate([fpr[i] for i in range(n_classes)]))
+
+    # Then interpolate all ROC curves at this points
+    mean_tpr = np.zeros_like(all_fpr)
+    for i in range(n_classes):
+        mean_tpr += np.interp(all_fpr, fpr[i], tpr[i])
+
+    # Finally average it and compute AUC
+    mean_tpr /= n_classes
+
+    fpr["macro"] = all_fpr
+    tpr["macro"] = mean_tpr
+    roc_auc["macro"] = auc(fpr["macro"], tpr["macro"])
+
+    # Plot all ROC curves
+    plt.figure()
+    lw = 2
+    plt.plot(fpr["micro"], tpr["micro"],
+             label='micro-average ROC curve (area = {0:0.2f})'
+                   ''.format(roc_auc["micro"]),
+             color='deeppink', linestyle=':', linewidth=4)
+
+    plt.plot(fpr["macro"], tpr["macro"],
+             label='macro-average ROC curve (area = {0:0.2f})'
+                   ''.format(roc_auc["macro"]),
+             color='navy', linestyle=':', linewidth=4)
+
+    colors = cycle(['aqua', 'darkorange', 'cornflowerblue', 'skyblue', 'red'])
+    for i, color in zip(range(n_classes), colors):
+        plt.plot(fpr[i], tpr[i], color=color, lw=lw,
+                 label='ROC curve for {0} URLs (area = {1:0.2f})'
+                       ''.format(data_labels[i], roc_auc[i]))
+
+    plt.plot([0, 1], [0, 1], 'k--', lw=lw)
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title(algo + ' - Multi-class ROC Curve Plot')
+    plt.legend(loc="lower right")
+    plt.show()
+# dataset = pd.read_csv('data/all_data_labeled.csv')
+#
+# # Store URLs and their labels
+# urls = dataset.iloc[:, 2].values
+# labels = dataset.iloc[:, 1].values
+#
+# # Extract some lexical features
+# features = extractLexicalFeatures(urls)
+# # displayFeatureHistogram(features, labels)
+# featureVariability(features)
