@@ -90,13 +90,13 @@ def visualize(label_test, prediction, eval_algorithm):
 
 def evaluateFeatures(eval_algorithm, training_features, training_output):
     algo = __getAlgorithmName(eval_algorithm)
-    # selector = RFECV(algo, step=1, cv=5)
-    # selector = selector.fit(training_features, training_output)
-    # e = selector.support_
-    # f = selector.score(training_features, training_output)
-    # feature_log.info(datetime.now())
-    # feature_log.info(e)
-    # feature_log.info(f)
+    selector = RFECV(algo, step=1, cv=5)
+    selector = selector.fit(training_features, training_output)
+    e = selector.support_
+    f = selector.score(training_features, training_output)
+    feature_log.info(datetime.now())
+    feature_log.info(e)
+    feature_log.info(f)
     featureVariability(training_features)
     feature_log.info('\n')
 
@@ -149,6 +149,7 @@ def featureVariability(data_set):
     df = pd.DataFrame(columns=FeatureList)
     df.loc[0] = featureVar
     feature_log.info(df.to_string())
+    feature_log.info('\n')
 
 
 def __getAlgorithmName(abbreviation):

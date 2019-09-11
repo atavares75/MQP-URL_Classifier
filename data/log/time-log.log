@@ -1,0 +1,55 @@
+testing time logger
+2019-09-10 14:30:59.385750
+Algorithm Run: Random Forest
+Training Time: 0:00:13.970960
+Testing Time: 0:00:00.339619
+
+testing time logger
+2019-09-10 14:42:13.868114
+Algorithm Run: Logistic Regression
+Training Time: 0:00:07.924089
+Testing Time: 0:00:00.062610
+
+testing time logger
+2019-09-10 14:44:17.442846
+Algorithm Run: SVM-Linear
+Training Time: 0:00:18.532639
+Testing Time: 0:00:00.055668
+
+testing time logger
+2019-09-10 14:49:51.029761
+Algorithm Run: SVM-rbf
+Training Time: 0:03:36.487665
+Testing Time: 0:00:52.635085
+
+testing time logger
+2019-09-10 15:15:53.736170
+Algorithm Run: SVM-rbf
+Training Time: 0:16:35.499602
+Testing Time: 0:01:59.226978
+
+testing time logger
+2019-09-10 16:25:04.239388
+Algorithm Run: SVM-rbf
+Training Time: 0:39:46.066994
+Testing Time: 0:03:14.946371
+
+testing time logger
+2019-09-10 19:29:15.466526
+Algorithm Run: SVM-rbf
+Training Time: 0:16:10.402168
+Testing Time: 0:02:05.167445
+
+testing time logger
+2019-09-10 19:48:57.763196
+Algorithm Run: SVM-rbf
+Training Time: 0:16:04.593151
+Testing Time: 0:01:56.671843
+
+testing time logger
+testing time logger
+2019-09-10 23:11:03.891782
+Algorithm Run: SVM-rbf
+Training Time: 0:19:27.381996
+Testing Time: 0:02:03.232304
+

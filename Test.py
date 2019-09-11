@@ -14,7 +14,7 @@ from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
 
 from FeatureExtraction import extractLexicalFeatures
-from VisualizeResults import visualize, evaluateFeatures
+from VisualizeResults import visualize, evaluateFeatures, featureVariability
 
 algorithms = ["rf", "lr", "svm-l", "svm-rbf"]
 
@@ -35,10 +35,11 @@ labels = dataset.iloc[:, 1].values
 
 # Extract some lexical features
 features = extractLexicalFeatures(urls)
-
 # Convert to numpy arrays
 feature = np.asarray(features.to_numpy())
 ls = np.asarray(labels)
+
+var = featureVariability(feature)
 
 feature_train, feature_test, label_train, label_test = train_test_split(feature, ls, test_size=0.20, random_state=1436)
 
@@ -48,7 +49,7 @@ def machine_learning_algorithm(input_algorithm):
         "rf": RandomForestClassifier(n_estimators=25, max_depth=None, max_features=0.4, random_state=11),
         "lr": LogisticRegression(multi_class='multinomial', solver='lbfgs'),
         "svm-l": LinearSVC(dual=False, fit_intercept=False, max_iter=1700, C=1),
-        "svm-rbf": SVC(kernel='rbf', gamma='auto', max_iter=2000, C=1)
+        "svm-rbf": SVC(kernel='rbf', gamma='auto', max_iter=10000, C=1)
     }
     return switcher.get(input_algorithm, lambda: "Invalid Algorithm")
 
@@ -74,15 +75,13 @@ def train_and_test(algorithm, feature_selection_algorithm):
     testing_time = end_testing_time - start_testing_time
     time_log.info(datetime.now())
 
-    if len(sys.argv) > 1:
-        time_log.info('Algorithm Run: ' + __getAlgorithmName(sys.argv[1]))
-    else:
-        time_log.info('Algorithm Run: All')
+    time_log.info('Algorithm Run: ' + __getAlgorithmName(feature_selection_algorithm))
+
     message = 'Training Time: ' + str(training_time) + '\n' + 'Testing Time: ' + str(testing_time) + '\n'
     time_log.info(message)
 
     visualize(label_test, prediction, feature_selection_algorithm)
-    evaluateFeatures(feature_selection_algorithm, feature_train, label_train)
+    #evaluateFeatures(feature_selection_algorithm, feature_train, label_train)
 
 
 if len(sys.argv) > 1:
