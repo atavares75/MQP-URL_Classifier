@@ -7,14 +7,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_selection import RFECV
+from sklearn.feature_selection import mutual_info_classif, f_classif, chi2, SelectKBest
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_curve, auc
 from sklearn.preprocessing import label_binarize
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
-
-from FeatureExtraction import extractLexicalFeatures
+from FeatureExtraction import FeatureList
 
 handler = logging.handlers.WatchedFileHandler(
     os.environ.get("LOGFILE", "data/log/results-log.log"))
@@ -35,36 +34,6 @@ feature_log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
 feature_log.addHandler(handler2)
 
 data_labels = ['Normal', 'malware', 'phish', 'ransomware', 'BotnetC&C']
-
-FeatureList = ['Length of URL',
-               'Number of ‘.’ In URL',
-               'Number of ‘@‘ in URL',
-               'Params in URL',
-               'Queries in URL',
-               'Fragments in URL',
-               'Entropy of Domain name',
-               'Check for Non Standard port',
-               'Domain name in Alexa Top 1 Million',
-               'Check for non-ascii characters',
-               'Check for popular domains in subdomains',
-               '’-‘ in domain name',
-               'Digits in domain name',
-               'Length of host',
-               'Number of ‘.’ in domain name',
-               'IP based host name',
-               'Hex based host name',
-               'Check for common TLD',
-               'Length of path',
-               'Count ‘-‘ in path',
-               'Count ‘/‘ in path',
-               'Count ‘=‘ in path',
-               'Count ‘;‘ in path',
-               'Count ‘,‘ in path',
-               'Count ‘_‘ in path',
-               'Count ‘.’ in path',
-               'Count ‘?’ in path',
-               'Count ‘&’ in path',
-               'Username and Password in path']
 
 
 def visualize(label_test, prediction, eval_algorithm):
@@ -88,16 +57,21 @@ def visualize(label_test, prediction, eval_algorithm):
     results_log.info('\n')
 
 
-def evaluateFeatures(eval_algorithm, training_features, training_output):
-    algo = __getAlgorithmName(eval_algorithm)
-    selector = RFECV(algo, step=1, cv=5)
-    selector = selector.fit(training_features, training_output)
-    e = selector.support_
-    f = selector.score(training_features, training_output)
+def evaluateFeatures(training_features, training_output):
+    new_output = __convertToIntArray(training_output)
+    # discriminativeTests(training_features, new_output)
+    chi_score, p_val = chi2(training_features, new_output)
+    x_new = SelectKBest(chi2, k='all').fit(training_features, new_output)
     feature_log.info(datetime.now())
-    feature_log.info(e)
-    feature_log.info(f)
-    featureVariability(training_features)
+    feature_log.info(chi_score)
+    feature_log.info('\n')
+    feature_log.info(p_val)
+    feature_log.info('\n')
+    feature_log.info(x_new.scores_)
+    feature_log.info('\n')
+    feature_log.info(x_new.pvalues_)
+    feature_log.info('\n')
+    # featureVariability(training_features)
     feature_log.info('\n')
 
 
@@ -217,6 +191,28 @@ def generateROC(test, score, eval_algorithm):
     plt.title(algo + ' - Multi-class ROC Curve Plot')
     plt.legend(loc="lower right")
     plt.show()
+
+
+def __convertToIntArray(training_output):
+    new_output = list()
+    for url_type in training_output:
+        i = data_labels.index(url_type)
+        new_output.append(i)
+    return new_output
+
+
+def discriminativeTests(X, y):
+    f_test, p_test = f_classif(X, y)
+
+    mi = mutual_info_classif(X, y)
+    fig, axes = plt.subplots(10, 3, figsize=(9, 9))  # 3 columns each containing 10 figures, total 30 features
+    ax = axes.ravel()
+    for j in range(len(FeatureList)):
+        ax[j].scatter(X[:, j], y, edgecolor='black', s=10)
+        ax[j].set_title("{} - F-test={:.2f}, MI={:.2f}".format(FeatureList[j], f_test[j], mi[j]), fontsize=8)
+    plt.tight_layout()
+    plt.show()
+
 # dataset = pd.read_csv('data/all_data_labeled.csv')
 #
 # # Store URLs and their labels

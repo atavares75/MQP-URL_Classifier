@@ -10,33 +10,34 @@ from AlexaTop1MillionDict import alexaSet, alexaNameSet
 
 FeatureList = ['Length of URL',
                'Number of ‘.’ In URL',
-               'Number of ‘@‘ in URL',
-               'Params in URL',
+#               'Number of ‘@‘ in URL',
+#              'Params in URL',
                'Queries in URL',
-               'Fragments in URL',
+#               'Fragments in URL',
                'Entropy of Domain name',
-               'Check for Non Standard port',
+#               'Check for Non Standard port',
                'Domain name in Alexa Top 1 Million',
-               'Check for non-ascii characters',
-               'Check for popular domains in subdomains',
-               '’-‘ in domain name',
+#               'Check for non-ascii characters',
+#               'Check for popular domains in subdomains',
+#               '’-‘ in domain name',
                'Digits in domain name',
                'Length of host',
                'Number of ‘.’ in domain name',
-               'IP based host name',
-               'Hex based host name',
-               'Check for common TLD',
+#               'IP based host name',
+#               'Hex based host name',
+#               'Check for common TLD',
                'Length of path',
                'Count ‘-‘ in path',
-               'Count ‘/‘ in path',
-               'Count ‘=‘ in path',
-               'Count ‘;‘ in path',
+#               'Count ‘/‘ in path',
+#               'Count ‘=‘ in path',
+#               'Count ‘;‘ in path',
                'Count ‘,‘ in path',
-               'Count ‘_‘ in path',
+#               'Count ‘_‘ in path',
                'Count ‘.’ in path',
-               'Count ‘?’ in path',
-               'Count ‘&’ in path',
-               'Username and Password in path']
+#               'Count ‘?’ in path',
+#               'Count ‘&’ in path',
+#               'Username and Password in path'
+                ]
 
 
 def extractLexicalFeatures(url_list):
@@ -54,17 +55,17 @@ def extractLexicalFeatures(url_list):
             # Extraction of features:
             data_point.append(checkLength(url))
             data_point.append(countCharacterInString('.', url))
-            data_point.append(countCharacterInString('@', url))
-            data_point.append(checkForParams(parseResults))
+            #data_point.append(countCharacterInString('@', url))
+            #data_point.append(checkForParams(parseResults))
             data_point.append(checkForQueries(parseResults))
-            data_point.append(checkForFragments(parseResults))
+#            data_point.append(checkForFragments(parseResults))
             data_point.append(calculateEntropyOfDomainName(parseResults.netloc))
-            data_point.append(checkNonStandardPort(parseResults.netloc))
+            #data_point.append(checkNonStandardPort(parseResults.netloc))
             data_point.append(checkAlexaTop1Million(parseResults.netloc))
-            data_point.append(checkForPunycode(parseResults.netloc))
-            data_point.append(checkSubDomains(parseResults.netloc))
+            #data_point.append(checkForPunycode(parseResults.netloc))
+##            data_point.append(checkSubDomains(parseResults.netloc))
             # '-' in host
-            data_point.append(checkForCharacter('-', host))
+#            data_point.append(checkForCharacter('-', host))
             # digits in host
             data_point.append(checkForDigits(host))
             # length of host
@@ -72,22 +73,22 @@ def extractLexicalFeatures(url_list):
             # number of '.' in host
             data_point.append(countCharacterInString('.', host))
             # IP based host
-            data_point.append(checkForIPAddress(host))  # optimal
+##            data_point.append(checkForIPAddress(host))  # optimal
             # Hex based host
-            data_point.append(checkHexBasedHost(host))
+            #data_point.append(checkHexBasedHost(host))
             # Is TLD common
-            data_point.append(checkTLD(host))
+##            data_point.append(checkTLD(host))
             data_point.append(countCharacterInString('-', path))  # optimal
-            data_point.append(countCharacterInString('/', path))  # 15
-            data_point.append(countCharacterInString('=', path))
-            data_point.append(countCharacterInString(';', path))
+ #           data_point.append(countCharacterInString('/', path))  # 15
+            #data_point.append(countCharacterInString('=', path))
+            #data_point.append(countCharacterInString(';', path))
             data_point.append(countCharacterInString(',', path))
-            data_point.append(countCharacterInString('-', path))
+##            data_point.append(countCharacterInString('-', path))
             data_point.append(countCharacterInString('.', path))
             data_point.append(checkLength(path))
-            data_point.append(countCharacterInString('?', path))  # optimal
-            data_point.append(countCharacterInString('&', path))
-            data_point.append(checkForUsernameOrPassword(path))
+            #data_point.append(countCharacterInString('?', path))  # optimal
+            #data_point.append(countCharacterInString('&', path))
+            #data_point.append(checkForUsernameOrPassword(path))
         else:
             print(i)
             print(str(url))
@@ -207,6 +208,7 @@ def checkForPunycode(host):
         if not c.isascii():
             return 1
     return 0
+
 
 # For Testing functions:
 # extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
