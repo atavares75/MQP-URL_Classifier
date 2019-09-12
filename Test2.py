@@ -27,7 +27,7 @@ time_log = logging.getLogger('data/log/time-log.log')
 time_log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
 time_log.addHandler(handler0)
 # Read in csv
-training = pd.read_csv('data/5050_training_set.csv')
+training = pd.read_csv('data/new_training_set.csv')
 test = pd.read_csv('data/labeled_test_set.csv')
 
 # Store URLs and their labels
