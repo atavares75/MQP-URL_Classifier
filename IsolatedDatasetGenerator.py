@@ -1,18 +1,12 @@
+# data_labels = ['Normal', 'malware', 'phish', 'ransomware', 'BotnetC&C']
 
 
-def convertData(category, labelTrain, labelTest):
-    newTrain = list()
-    newTest = list()
-    for entry in labelTrain:
+def convertData(category, labeledData):
+    newData = list()
+    for entry in labeledData:
         if entry == category:
-            newTrain = category
+            newData.append(category)
         else:
-            newTrain = 'Other'
-    for entry in labelTest:
-        if entry == category:
-            newTest = category
-        else:
-            newTest = 'Other'
+            newData.append('Other')
+    return newData
 
-    labelTrain = newTrain
-    labelTest = newTest

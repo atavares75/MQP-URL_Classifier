@@ -89,7 +89,6 @@ def train_and_test(algorithm, feature_selection_algorithm):
     time_log.info(message)
 
     visualize(label_test, prediction, feature_selection_algorithm)
-    #evaluateFeatures(feature_selection_algorithm, feature_train, label_train)
 
 
 if len(sys.argv) > 1:

@@ -1,11 +1,13 @@
 import logging.handlers
 import os
+import sys
 
 import numpy as np
 import pandas as pd
 
 from FeatureExtraction import extractLexicalFeatures
-from VisualizeResults import evaluateFeatures
+from IsolatedDatasetGenerator import convertData
+from VisualizeResults import evaluateFeatures, data_labels
 
 algorithms = ["rf", "lr", "svm-l", "svm-rbf"]
 
@@ -18,11 +20,33 @@ time_log = logging.getLogger('data/log/time-log.log')
 time_log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
 time_log.addHandler(handler0)
 # Read in csv
-dataset = pd.read_csv('data/all_data_labeled.csv')
+dataset = pd.read_csv('data/full_5050_training_set.csv')
+
+argsGood = True
+
+# makes sure types aren't repeated
+selections = list()
+
+if len(sys.argv) > 1:
+    for arg in sys.argv[1:]:
+        if arg not in data_labels or arg in selections:
+            argsGood = False
+        else:
+            selections.append(arg)
+
+if 2 < len(sys.argv) < 6 and argsGood:
+    urlData = dataset.loc[dataset['label'] == sys.argv[1]]
+    i = 2
+    for arg in sys.argv[2:]:
+        temp = dataset.loc[dataset['label'] == sys.argv[i]]
+        urlData = pd.concat([urlData, temp], ignore_index=True, sort=False)
+        i = i + 1
+else:
+    urlData = dataset
 
 # Store URLs and their labels
-urls = dataset.iloc[:, 2].values
-labels = dataset.iloc[:, 1].values
+urls = urlData.iloc[:, 3].values
+labels = urlData.iloc[:, 2].values
 
 # Extract some lexical features
 features = extractLexicalFeatures(urls)
@@ -30,5 +54,10 @@ features = extractLexicalFeatures(urls)
 feature = np.asarray(features.to_numpy())
 ls = np.asarray(labels)
 
-# var = featureVariability(feature)
-evaluateFeatures(feature, ls)
+new_label = None
+if len(sys.argv) == 2:
+    if sys.argv[1] in data_labels:
+        new_label = ['Other', sys.argv[1]]
+        ls = convertData(sys.argv[1], ls)
+
+evaluateFeatures(feature, ls, new_label)
