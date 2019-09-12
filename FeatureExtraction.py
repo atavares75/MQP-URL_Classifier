@@ -17,7 +17,7 @@ FeatureList = ['Length of URL',
                'Entropy of Domain name',
 #               'Check for Non Standard port',
                'Domain name in Alexa Top 1 Million',
-#               'Check for non-ascii characters',
+               'Check for punycode',
 #               'Check for popular domains in subdomains',
 #               '’-‘ in domain name',
                'Digits in domain name',
@@ -62,7 +62,7 @@ def extractLexicalFeatures(url_list):
             data_point.append(calculateEntropyOfDomainName(parseResults.netloc))
             #data_point.append(checkNonStandardPort(parseResults.netloc))
             data_point.append(checkAlexaTop1Million(parseResults.netloc))
-            #data_point.append(checkForPunycode(parseResults.netloc))
+            data_point.append(checkForPunycode(parseResults.netloc))
 ##            data_point.append(checkSubDomains(parseResults.netloc))
             # '-' in host
 #            data_point.append(checkForCharacter('-', host))
@@ -204,9 +204,8 @@ def checkSubDomains(host_name):
 
 
 def checkForPunycode(host):
-    for c in host:
-        if not c.isascii():
-            return 1
+    if 'xn--' in host:
+        return 1
     return 0
 
 

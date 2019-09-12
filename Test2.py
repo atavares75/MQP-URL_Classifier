@@ -46,8 +46,6 @@ feature = np.asarray(features.to_numpy())
 ls = np.asarray(labels)
 test_feature = np.asarray(test_features.to_numpy())
 
-var = featureVariability(feature)
-
 feature_train = feature
 label_train = ls
 feature_test = test_feature
