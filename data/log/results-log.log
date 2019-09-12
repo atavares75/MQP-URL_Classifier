@@ -205,3 +205,116 @@ weighted avg       0.93      0.93      0.92     64831
 0.930527062670636
 
 
+2019-09-11 22:58:46.780079
+Algorithm Run: Random Forest
+                 pred:Normal  pred:malware  pred:phish  pred:ransomware  pred:BotnetC&C
+true:Normal            27237             2          20                0               1
+true:malware              11         11946          43                0               0
+true:phish                22            68       11910                0               0
+true:ransomware            0             0           0             1402               2
+true:BotnetC&C             0             0           0                3            1853
+              precision    recall  f1-score   support
+
+   BotnetC&C       1.00      1.00      1.00      1856
+      Normal       1.00      1.00      1.00     27260
+     malware       0.99      1.00      0.99     12000
+       phish       0.99      0.99      0.99     12000
+  ransomware       1.00      1.00      1.00      1404
+
+    accuracy                           1.00     54520
+   macro avg       1.00      1.00      1.00     54520
+weighted avg       1.00      1.00      1.00     54520
+
+0.9968451944240646
+
+
+2019-09-12 10:19:28.985419
+Algorithm Run: Random Forest
+                 pred:Normal  pred:malware  pred:phish  pred:ransomware  pred:BotnetC&C
+true:Normal            27237             2          20                0               1
+true:malware              11         11946          43                0               0
+true:phish                22            68       11910                0               0
+true:ransomware            0             0           0             1402               2
+true:BotnetC&C             0             0           0                3            1853
+              precision    recall  f1-score   support
+
+   BotnetC&C       1.00      1.00      1.00      1856
+      Normal       1.00      1.00      1.00     27260
+     malware       0.99      1.00      0.99     12000
+       phish       0.99      0.99      0.99     12000
+  ransomware       1.00      1.00      1.00      1404
+
+    accuracy                           1.00     54520
+   macro avg       1.00      1.00      1.00     54520
+weighted avg       1.00      1.00      1.00     54520
+
+0.9968451944240646
+2019-09-12 10:57:04.121384
+Algorithm Run: Random Forest
+                 pred:Normal  pred:malware  pred:phish  pred:ransomware  pred:BotnetC&C
+true:Normal            27237             2          20                0               1
+true:malware              11         11946          43                0               0
+true:phish                22            68       11910                0               0
+true:ransomware            0             0           0             1402               2
+true:BotnetC&C             0             0           0                3            1853
+              precision    recall  f1-score   support
+
+   BotnetC&C       1.00      1.00      1.00      1856
+      Normal       1.00      1.00      1.00     27260
+     malware       0.99      1.00      0.99     12000
+       phish       0.99      0.99      0.99     12000
+  ransomware       1.00      1.00      1.00      1404
+
+    accuracy                           1.00     54520
+   macro avg       1.00      1.00      1.00     54520
+weighted avg       1.00      1.00      1.00     54520
+
+0.9968451944240646
+
+
+2019-09-12 10:58:16.938941
+Algorithm Run: Logistic Regression
+                 pred:Normal  pred:malware  pred:phish  pred:ransomware  pred:BotnetC&C
+true:Normal            24964           756        1496                0              44
+true:malware             818          6883        4297                0               2
+true:phish              1661          2418        7860               48              13
+true:ransomware            1             0           0             1398               5
+true:BotnetC&C            35           196         378               25            1222
+              precision    recall  f1-score   support
+
+   BotnetC&C       0.95      0.66      0.78      1856
+      Normal       0.91      0.92      0.91     27260
+     malware       0.67      0.57      0.62     12000
+       phish       0.56      0.66      0.60     12000
+  ransomware       0.95      1.00      0.97      1404
+
+    accuracy                           0.78     54520
+   macro avg       0.81      0.76      0.78     54520
+weighted avg       0.78      0.78      0.78     54520
+
+0.7763573000733676
+
+
+2019-09-12 10:59:00.321278
+Algorithm Run: SVM-Linear
+                 pred:Normal  pred:malware  pred:phish  pred:ransomware  pred:BotnetC&C
+true:Normal            25144           840        1243                0              33
+true:malware             649          8638        2710                0               3
+true:phish              1793          4009        6163                0              35
+true:ransomware            1             1           0             1401               1
+true:BotnetC&C            51            89         141               16            1559
+              precision    recall  f1-score   support
+
+   BotnetC&C       0.96      0.84      0.89      1856
+      Normal       0.91      0.92      0.92     27260
+     malware       0.64      0.72      0.68     12000
+       phish       0.60      0.51      0.55     12000
+  ransomware       0.99      1.00      0.99      1404
+
+    accuracy                           0.79     54520
+   macro avg       0.82      0.80      0.81     54520
+weighted avg       0.79      0.79      0.78     54520
+
+0.7869589141599413
+
+
