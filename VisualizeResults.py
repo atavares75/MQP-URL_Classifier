@@ -16,20 +16,20 @@ from sklearn.svm import SVC
 from FeatureExtraction import FeatureList
 
 handler = logging.handlers.WatchedFileHandler(
-    os.environ.get("LOGFILE", "../data/log/results-log.log"))
+    os.environ.get("LOGFILE", "data/log/results-log.log"))
 FORMAT = '%(message)s'
 formatter = logging.Formatter(FORMAT)
 handler.setFormatter(formatter)
-results_log = logging.getLogger('../data/log/results-log.log')
+results_log = logging.getLogger('data/log/results-log.log')
 results_log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
 results_log.addHandler(handler)
 
 handler2 = logging.handlers.WatchedFileHandler(
-    os.environ.get("LOGFILE", "../data/log/feature-log.log"))
+    os.environ.get("LOGFILE", "data/log/feature-log.log"))
 FORMAT2 = '%(message)s'
 formatter2 = logging.Formatter(FORMAT2)
 handler2.setFormatter(formatter2)
-feature_log = logging.getLogger("../data/log/feature-log.log")
+feature_log = logging.getLogger("data/log/feature-log.log")
 feature_log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
 feature_log.addHandler(handler2)
 
