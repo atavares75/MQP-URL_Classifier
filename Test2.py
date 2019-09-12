@@ -27,15 +27,15 @@ time_log = logging.getLogger('data/log/time-log.log')
 time_log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
 time_log.addHandler(handler0)
 # Read in csv
-training = pd.read_csv('data/new_training_set.csv')
+training = pd.read_csv('data/5050_training_set.csv')
 test = pd.read_csv('data/labeled_test_set.csv')
 
 # Store URLs and their labels
 urls = training.iloc[:, 3].values
 labels = training.iloc[:, 2].values
 
-test_urls = training.iloc[:, 3].values
-test_labels = training.iloc[:, 2].values
+test_urls = test.iloc[:, 2].values
+test_labels = test.iloc[:, 1].values
 
 # Extract some lexical features
 features = extractLexicalFeatures(urls)
@@ -45,8 +45,6 @@ test_features = extractLexicalFeatures(test_urls)
 feature = np.asarray(features.to_numpy())
 ls = np.asarray(labels)
 test_feature = np.asarray(test_features.to_numpy())
-
-var = featureVariability(feature)
 
 feature_train = feature
 label_train = ls
