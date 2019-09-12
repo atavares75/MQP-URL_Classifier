@@ -19,11 +19,11 @@ from VisualizeResults import visualize, evaluateFeatures, featureVariability
 algorithms = ["rf", "lr", "svm-l", "svm-rbf"]
 
 handler0 = logging.handlers.WatchedFileHandler(
-    os.environ.get("LOGFILE", "data/log/time-log.log"))
+    os.environ.get("LOGFILE", "../data/log/time-log.log"))
 FORMAT0 = '%(message)s'
 formatter0 = logging.Formatter(FORMAT0)
 handler0.setFormatter(formatter0)
-time_log = logging.getLogger('data/log/time-log.log')
+time_log = logging.getLogger('../data/log/time-log.log')
 time_log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
 time_log.addHandler(handler0)
 # Read in csv
