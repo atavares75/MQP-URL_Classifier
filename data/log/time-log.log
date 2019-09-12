@@ -53,3 +53,45 @@ Algorithm Run: SVM-rbf
 Training Time: 0:19:27.381996
 Testing Time: 0:02:03.232304
 
+testing time logger
+2019-09-11 11:00:06.031392
+Algorithm Run: Random Forest
+Training Time: 0:00:14.047909
+Testing Time: 0:00:00.362542
+
+testing time logger
+2019-09-11 13:17:12.289960
+Algorithm Run: Random Forest
+Training Time: 0:00:14.223333
+Testing Time: 0:00:00.383557
+
+testing time logger
+2019-09-11 14:16:16.259252
+Algorithm Run: Random Forest
+Training Time: 0:00:14.314523
+Testing Time: 0:00:00.358636
+
+testing time logger
+2019-09-11 20:13:54.244408
+Algorithm Run: Random Forest
+Training Time: 0:00:11.789572
+Testing Time: 0:00:00.310486
+
+testing time logger
+2019-09-11 20:18:30.150646
+Algorithm Run: Random Forest
+Training Time: 0:00:11.751575
+Testing Time: 0:00:00.308910
+
+testing time logger
+2019-09-11 20:25:35.388534
+Algorithm Run: Random Forest
+Training Time: 0:00:09.715958
+Testing Time: 0:00:00.317259
+
+testing time logger
+2019-09-11 20:28:09.279288
+Algorithm Run: Random Forest
+Training Time: 0:00:08.335479
+Testing Time: 0:00:00.324723
+
