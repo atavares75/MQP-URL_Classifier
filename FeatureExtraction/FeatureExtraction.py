@@ -57,7 +57,9 @@ class FeatureSet:
     def __init__(self, config_path, url_list):
         with open(config_path) as fe:
             selectedFeatures = json.load(fe)
-        self.FeatureList = list(selectedFeatures["FeatureList"].values())
+        self.FeatureList = list()
+        for feature in selectedFeatures["FeatureList"]:
+            self.FeatureList.append(feature["Feature"])
         self.df = self.__extractFeatures(url_list)
 
     def __extractFeatures(self, url_list):
