@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.feature_selection import mutual_info_classif, f_classif, chi2
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_curve, auc
 from sklearn.preprocessing import label_binarize
+import seaborn as sns
 
 
 class Evaluate:
@@ -14,6 +15,7 @@ class Evaluate:
     cmtx = None
     ROC = None
     discriminativeFeaturePlots = None
+    heatmap = None
 
     def __init__(self, training_set, algorithm, training_output):
         self.features = training_set
@@ -125,3 +127,9 @@ class Evaluate:
                 chi_score[j], fontsize=8)
         plt.tight_layout()
         self.discriminativeFeaturePlots = plt.gcf()
+
+    def buildCorrelationHeatMap(self):
+        corl = self.features.df.corr(method='kendall')
+        ax = sns.heatmap(corl, xticklabels=True, yticklabels=True, vmin=0, vmax=1, linewidths=.2, cmap="YlGnBu",
+                         square=True)
+        self.heatmap = plt.gcf()
