@@ -27,7 +27,7 @@ time_log = logging.getLogger('data/log/time-log.log')
 time_log.setLevel(os.environ.get("LOGLEVEL", "INFO"))
 time_log.addHandler(handler0)
 # Read in csv
-training = pd.read_csv('data/5050_training_set.csv')
+training = pd.read_csv('data/8020_training_set.csv')
 test = pd.read_csv('data/labeled_test_set.csv')
 
 # Store URLs and their labels
@@ -66,7 +66,13 @@ def __getAlgorithmName(abbreviation):
     if abbreviation in algo_dict:
         return algo_dict[abbreviation]
 
-
+def print_false_positives(correct, prediction, label):
+    print("Normal False Positives")
+    for i in range (len(correct)):
+        if correct[i] != label:
+            if prediction[i] == label:
+                print(correct[i] + ": " + test_urls[i])
+		
 def train_and_test(algorithm, feature_selection_algorithm):
     time_log.info('testing time logger')
     print("Started Training")
@@ -90,8 +96,9 @@ def train_and_test(algorithm, feature_selection_algorithm):
 
     visualize(label_test, prediction, feature_selection_algorithm)
     #evaluateFeatures(feature_selection_algorithm, feature_train, label_train)
-
-
+	
+    print_false_positives(label_test, prediction, "Normal")
+	
 if len(sys.argv) > 1:
     train_and_test(machine_learning_algorithm(sys.argv[1]), sys.argv[1])
 else:
