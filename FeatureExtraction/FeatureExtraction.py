@@ -7,7 +7,7 @@ from urllib.parse import urlparse
 import tldextract
 from pandas import DataFrame
 
-from AlexaTop1MillionDict import alexaSet, alexaNameSet
+from FeatureExtraction import alexaNameSet, alexaSet
 
 
 def evaluateFeature(ex, feature):
