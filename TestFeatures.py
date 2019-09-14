@@ -8,7 +8,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from FeatureExtraction import extractLexicalFeatures, FeatureList
 from IsolatedDatasetGenerator import convertData
-from VisualizeResults import evaluateFeatures, data_labels
+from Metrics.VisualizeResults import evaluateFeatures, data_labels
 
 algorithms = ["rf", "lr", "svm-l", "svm-rbf"]
 
