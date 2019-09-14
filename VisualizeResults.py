@@ -7,12 +7,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.feature_selection import mutual_info_classif, f_classif, chi2, SelectKBest
+from sklearn.feature_selection import mutual_info_classif, f_classif, chi2
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_curve, auc
 from sklearn.preprocessing import label_binarize
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
+
 from FeatureExtraction import FeatureList
 
 handler = logging.handlers.WatchedFileHandler(
@@ -57,20 +58,14 @@ def visualize(label_test, prediction, eval_algorithm):
     results_log.info('\n')
 
 
-def evaluateFeatures(training_features, training_output):
-    new_output = __convertToIntArray(training_output)
-    # discriminativeTests(training_features, new_output)
-    chi_score, p_val = chi2(training_features, new_output)
-    x_new = SelectKBest(chi2, k='all').fit(training_features, new_output)
+def evaluateFeatures(training_features, training_output, labels=None):
+    if labels is None:
+        new_output = __convertToIntArray(training_output, data_labels)
+    else:
+        new_output = __convertToIntArray(training_output, labels)
+    discriminativeTests(training_features, new_output)
     feature_log.info(datetime.now())
-    feature_log.info(chi_score)
-    feature_log.info('\n')
-    feature_log.info(p_val)
-    feature_log.info('\n')
-    feature_log.info(x_new.scores_)
-    feature_log.info('\n')
-    feature_log.info(x_new.pvalues_)
-    feature_log.info('\n')
+    # TODO: Implement SelectKBest
     # featureVariability(training_features)
     feature_log.info('\n')
 
@@ -193,33 +188,23 @@ def generateROC(test, score, eval_algorithm):
     plt.show()
 
 
-def __convertToIntArray(training_output):
+def __convertToIntArray(training_output, labels):
     new_output = list()
     for url_type in training_output:
-        i = data_labels.index(url_type)
+        i = labels.index(url_type)
         new_output.append(i)
     return new_output
 
 
 def discriminativeTests(X, y):
     f_test, p_test = f_classif(X, y)
-
+    chi_score, p_val = chi2(X, y)
     mi = mutual_info_classif(X, y)
     fig, axes = plt.subplots(10, 3, figsize=(9, 9))  # 3 columns each containing 10 figures, total 30 features
     ax = axes.ravel()
     for j in range(len(FeatureList)):
         ax[j].scatter(X[:, j], y, edgecolor='black', s=10)
-        ax[j].set_title("{} - F-test={:.2f}, MI={:.2f}".format(FeatureList[j], f_test[j], mi[j]), fontsize=8)
+        ax[j].set_title("{} - F-test={:.2f}, MI={:.2f}, Chi={:.2f}".format(FeatureList[j], f_test[j], mi[j]),
+                        chi_score[j], fontsize=8)
     plt.tight_layout()
     plt.show()
-
-# dataset = pd.read_csv('data/all_data_labeled.csv')
-#
-# # Store URLs and their labels
-# urls = dataset.iloc[:, 2].values
-# labels = dataset.iloc[:, 1].values
-#
-# # Extract some lexical features
-# features = extractLexicalFeatures(urls)
-# # displayFeatureHistogram(features, labels)
-# featureVariability(features)

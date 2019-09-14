@@ -98,7 +98,7 @@ def train_and_test(algorithm, feature_selection_algorithm):
     #evaluateFeatures(feature_selection_algorithm, feature_train, label_train)
 	
     print_false_positives(label_test, prediction, "Normal")
-	
+
 if len(sys.argv) > 1:
     train_and_test(machine_learning_algorithm(sys.argv[1]), sys.argv[1])
 else:
