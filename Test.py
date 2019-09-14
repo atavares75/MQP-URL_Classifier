@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
 from VisualizeResults import visualize
-from FeatureExtraction import extractLexicalFeatures
+from FeatureExtraction.FeatureExtraction import FeatureSet
 
 algorithms = ["rf", "lr", "svm-l", "svm-rbf"]
 
@@ -33,7 +33,7 @@ urls = dataset.iloc[:, 2].values
 labels = dataset.iloc[:, 1].values
 
 # Extract some lexical features
-features = extractLexicalFeatures(urls)
+features = FeatureSet.extractLexicalFeatures(urls)
 # Convert to numpy arrays
 feature = np.asarray(features.to_numpy())
 ls = np.asarray(labels)

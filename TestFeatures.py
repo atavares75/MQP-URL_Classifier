@@ -4,8 +4,9 @@ import sys
 
 import numpy as np
 import pandas as pd
-
-from FeatureExtraction import extractLexicalFeatures
+import seaborn as sns
+import matplotlib.pyplot as plt
+from FeatureExtraction import extractLexicalFeatures, FeatureList
 from IsolatedDatasetGenerator import convertData
 from VisualizeResults import evaluateFeatures, data_labels
 
@@ -61,3 +62,8 @@ if len(sys.argv) == 2:
         ls = convertData(sys.argv[1], ls)
 
 evaluateFeatures(feature, ls, new_label)
+
+data = pd.DataFrame(feature, columns=FeatureList)
+corl = data.corr(method='kendall')
+ax = sns.heatmap(corl, xticklabels=True, yticklabels=True, vmin=0, vmax=1, linewidths=.2, cmap="YlGnBu", square=True)
+plt.show()
