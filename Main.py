@@ -8,7 +8,13 @@ import pandas as pd
 
 from ModelBuilder.AlgorithmFactory import AlgorithmFactory as af
 from FeatureExtraction.FeatureExtraction import FeatureSet
-#from Metrics/VisualizeResults import visualize, evaluateFeatures, featureVariability
+#from Metrics.	VisualizeResults import visualize, evaluateFeatures, featureVariability
+
+def output_all():
+	
+
+def output_wanted():
+	
 
 def train_and_test(algorithm, train_feature_set, train_labels, test_feature_set, test_labels):
 	print("Training")
@@ -18,6 +24,9 @@ def train_and_test(algorithm, train_feature_set, train_labels, test_feature_set,
 	print("Testing")
 	prediction = algorithm.predict(test_feature_set)
 	print("DONE")
+	
+	#output_all()
+	#ouptut_wanetd()
 
 def main(json_file):
 	with open(json_file) as jf:
@@ -32,6 +41,7 @@ def main(json_file):
 	test_urls = test_data['url']
 	train_feature_set = np.asarray(FeatureSet(run["feature_set"], train_urls).df)
 	test_feature_set = np.asarray(FeatureSet(run["feature_set"], test_urls).df)
+	wanted_output = run["metrics"]
 	
 	for algorithm in algorithms:
 		train_and_test(algorithm, train_feature_set, train_labels, test_feature_set, test_labels)

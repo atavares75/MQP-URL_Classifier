@@ -1,0 +1,15 @@
+{ 
+	"algorithms": [{
+		"algorithm": "RandomForest",
+		"parameters": {
+			"n_estimators": 25,
+			"random_state": 11
+		}
+	}, {
+		"algorithm": "LogisticRegression",
+		"parameters": {
+			"multi_class": "multinomial",
+			"solver": "lbfgs"
+		}
+	}]
+}
