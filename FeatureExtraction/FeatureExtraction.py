@@ -57,8 +57,8 @@ class FeatureSet:
         :return: The output from extraction of selected feature
         """
         FeatureSwitcher = {'Length of URL': ex.checkLength(),
-                           'Number of ‘.’ in URL': ex.countCharacterInURL('.'),
-                           'Number of ‘@‘ in URL': ex.countCharacterInURL('@'),
+                           'Number of . in URL': ex.countCharacterInURL('.'),
+                           'Number of @ in URL': ex.countCharacterInURL('@'),
                            'Params in URL': ex.checkForParams(),
                            'Queries in URL': ex.checkForQueries(),
                            'Fragments in URL': ex.checkForFragments(),
@@ -67,23 +67,23 @@ class FeatureSet:
                            'Check Alexa Top 1 Million': ex.checkAlexaTop1Million(),
                            'Check for punycode': ex.checkForPunycode(),
                            'Check sub-domains': ex.checkSubDomains(),
-                           '’-‘ in domain name': ex.checkForCharacterInHost('-'),
+                           '- in domain name': ex.checkForCharacterInHost('-'),
                            'Digits in domain name': ex.checkForDigitsInDomain(),
                            'Length of host': ex.checkLength(),
-                           'Count ‘.’ in domain name': ex.countCharacterInHost('.'),
+                           'Count . in domain name': ex.countCharacterInHost('.'),
                            'IP based host name': ex.checkForIPAddress(),
                            'Hex based host name': ex.checkHexBasedHost(),
                            'Check for common TLD': ex.checkTLD(),
                            'Length of path': ex.checkLength(),
-                           'Count ‘-‘ in path': ex.countCharacterInPath('-'),
-                           'Count ‘/‘ in path': ex.countCharacterInPath('/'),
-                           'Count ‘=‘ in path': ex.countCharacterInPath('='),
-                           'Count ‘;‘ in path': ex.countCharacterInPath(';'),
-                           'Count ‘,‘ in path': ex.countCharacterInPath(','),
-                           'Count ‘_‘ in path': ex.countCharacterInPath('_'),
-                           'Count ‘.’ in path': ex.countCharacterInPath('.'),
-                           'Count ‘?’ in path': ex.countCharacterInPath('?'),
-                           'Count ‘&’ in path': ex.countCharacterInPath('&'),
+                           'Count - in path': ex.countCharacterInPath('-'),
+                           'Count / in path': ex.countCharacterInPath('/'),
+                           'Count = in path': ex.countCharacterInPath('='),
+                           'Count ; in path': ex.countCharacterInPath(';'),
+                           'Count , in path': ex.countCharacterInPath(','),
+                           'Count _ in path': ex.countCharacterInPath('_'),
+                           'Count . in path': ex.countCharacterInPath('.'),
+                           'Count ? in path': ex.countCharacterInPath('?'),
+                           'Count & in path': ex.countCharacterInPath('&'),
                            'Username/Password in path': ex.checkForUsernameOrPassword(),
                            'Check URL protocol': ex.checkURLProtocol()
                            }
@@ -308,8 +308,6 @@ class Extractor:
         if 'xn--' in self.host:
             return 1
         return 0
-
-
 
 # For Testing functions:
 # extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
