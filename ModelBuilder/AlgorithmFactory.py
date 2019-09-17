@@ -42,8 +42,10 @@ class AlgorithmFactory:
             all_runs = json.load(jf)
 
         algorithms = []
+        algorithm_names = []
 
         for algorithm in all_runs["algorithms"]:
             algorithms.append(AlgorithmFactory.get_algorithm(algorithm["algorithm"], algorithm["parameters"]))
+            algorithm_names.append(algorithm["algorithm"])
 
-        return algorithms
+        return algorithms, algorithm_names
