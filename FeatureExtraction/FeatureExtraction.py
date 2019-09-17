@@ -96,7 +96,7 @@ class Extractor:
         self.path = self.parseResults.path
         self.host = self.parseResults.netloc
 
-    def checkURLProtocol(self, url):
+    def checkURLScheme(self, url):
         """
         Checks URL scheme so that it can be properly processed by urlparse
         :param url: string
