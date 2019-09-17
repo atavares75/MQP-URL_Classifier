@@ -309,8 +309,6 @@ class Extractor:
             return 1
         return 0
 
-
-
 # For Testing functions:
 # extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
 # getURLScheme('https://www.goog-le.com/about')
