@@ -1,24 +1,25 @@
 # Robert Dwan
 
 import json
-import sys, os
+import os
+import sys
+import uuid
+from datetime import datetime
 
+import joblib
 import numpy as np
 import pandas as pd
-import uuid
-import joblib
 
 from FeatureExtraction.FeatureExtraction import FeatureSet
 from Metrics.VisualizeResults import AlgorithmPerformance
 from ModelBuilder.AlgorithmFactory import AlgorithmFactory as af
-from datetime import datetime
 
 
 class TrainTest:
 
     def __init__(self, algorithm, train_feature_set, train_labels, test_feature_set):
         self.algorithm = algorithm
-        
+
         start_train = datetime.now()
         self.algorithm.fit(train_feature_set, train_labels)
         end_train = datetime.now()
@@ -39,13 +40,13 @@ class OutputGenerator:
         self.id = uuid.uuid4()
         self.trainTest = trainTest
         self.ap = algorithmPerformance
-		
+
     def print_all(self):
         path = "outputs/%s_%s_Output" % (self.id, self.ap.algorithm)
         os.mkdir(path)
-		
+
         file = open("%s/metric_report.txt" % path, "w")
-		
+
         file.write("Output for: " + self.ap.algorithm + "\n")
         file.write("\nTime to train: ")
         file.write(str(self.trainTest.train_time))
@@ -56,14 +57,15 @@ class OutputGenerator:
         file.write("\n\nClassification Report:\n")
         file.write(self.ap.createClassificationReport())
         file.write("\n\nAccuracy: " + str(self.ap.calculateAccuracy()))
-		
+
         file.close()
-		
+
         fig = self.ap.generateROC()
-        fig.savefig('%s/ROC_Graph.png' % path, bbox_inches = 'tight')
-		
+        fig.savefig('%s/ROC_Graph.png' % path, bbox_inches='tight')
+
         joblib.dump(self.trainTest.algorithm, '%s/model.joblib' % path)
-		
+
+
 def main(json_file):
     with open(json_file) as jf:
         run = json.load(jf)
@@ -86,5 +88,6 @@ def main(json_file):
         ap = AlgorithmPerformance(test_labels, tt.prediction, name)
         output = OutputGenerator(tt, ap)
         output.print_all()
+
 
 main(sys.argv[1])
