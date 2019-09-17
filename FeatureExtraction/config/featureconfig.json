@@ -86,6 +86,9 @@
     },
     {
       "Feature": "Username/Password in path"
+    },
+    {
+      "Feature": "Check URL protocol"
     }
   ]
 

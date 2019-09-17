@@ -10,45 +10,6 @@ from pandas import DataFrame
 from FeatureExtraction import alexaNameSet, alexaSet
 
 
-def evaluateFeature(ex, feature):
-    """
-    :param ex: Extractor instance
-    :param feature: the feature you want evaluated
-    :return: The output from extraction of selected feature
-    """
-    FeatureSwitcher = {'Length of URL': ex.checkLength(),
-                       'Number of ‘.’ in URL': ex.countCharacterInURL('.'),
-                       'Number of ‘@‘ in URL': ex.countCharacterInURL('@'),
-                       'Params in URL': ex.checkForParams(),
-                       'Queries in URL': ex.checkForQueries(),
-                       'Fragments in URL': ex.checkForFragments(),
-                       'Entropy of Domain name': ex.calculateEntropyOfDomainName(),
-                       'Check for Non Standard port': ex.checkNonStandardPort(),
-                       'Check Alexa Top 1 Million': ex.checkAlexaTop1Million(),
-                       'Check for punycode': ex.checkForPunycode(),
-                       'Check sub-domains': ex.checkSubDomains(),
-                       '’-‘ in domain name': ex.checkForCharacterInHost('-'),
-                       'Digits in domain name': ex.checkForDigitsInDomain(),
-                       'Length of host': ex.checkLength(),
-                       'Count ‘.’ in domain name': ex.countCharacterInHost('.'),
-                       'IP based host name': ex.checkForIPAddress(),
-                       'Hex based host name': ex.checkHexBasedHost(),
-                       'Check for common TLD': ex.checkTLD(),
-                       'Length of path': ex.checkLength(),
-                       'Count ‘-‘ in path': ex.countCharacterInPath('-'),
-                       'Count ‘/‘ in path': ex.countCharacterInPath('/'),
-                       'Count ‘=‘ in path': ex.countCharacterInPath('='),
-                       'Count ‘;‘ in path': ex.countCharacterInPath(';'),
-                       'Count ‘,‘ in path': ex.countCharacterInPath(','),
-                       'Count ‘_‘ in path': ex.countCharacterInPath('_'),
-                       'Count ‘.’ in path': ex.countCharacterInPath('.'),
-                       'Count ‘?’ in path': ex.countCharacterInPath('?'),
-                       'Count ‘&’ in path': ex.countCharacterInPath('&'),
-                       'Username/Password in path': ex.checkForUsernameOrPassword()
-                       }
-    return FeatureSwitcher[feature]
-
-
 class FeatureSet:
     """
     Class that constructs and contains feature data frame
@@ -76,12 +37,52 @@ class FeatureSet:
             if type(url) is str:
                 ex = Extractor(url)
                 for feature in self.FeatureList:
-                    data_point.append(evaluateFeature(ex, feature))
+                    data_point.append(self.evaluateFeature(ex, feature))
             else:
                 print(i)
                 print(str(url))
             features.append(data_point)
         return DataFrame(features, columns=self.FeatureList)
+
+    @staticmethod
+    def evaluateFeature(ex, feature):
+        """
+        :param ex: Extractor instance
+        :param feature: the feature you want evaluated
+        :return: The output from extraction of selected feature
+        """
+        FeatureSwitcher = {'Length of URL': ex.checkLength(),
+                           'Number of ‘.’ in URL': ex.countCharacterInURL('.'),
+                           'Number of ‘@‘ in URL': ex.countCharacterInURL('@'),
+                           'Params in URL': ex.checkForParams(),
+                           'Queries in URL': ex.checkForQueries(),
+                           'Fragments in URL': ex.checkForFragments(),
+                           'Entropy of Domain name': ex.calculateEntropyOfDomainName(),
+                           'Check for Non Standard port': ex.checkNonStandardPort(),
+                           'Check Alexa Top 1 Million': ex.checkAlexaTop1Million(),
+                           'Check for punycode': ex.checkForPunycode(),
+                           'Check sub-domains': ex.checkSubDomains(),
+                           '’-‘ in domain name': ex.checkForCharacterInHost('-'),
+                           'Digits in domain name': ex.checkForDigitsInDomain(),
+                           'Length of host': ex.checkLength(),
+                           'Count ‘.’ in domain name': ex.countCharacterInHost('.'),
+                           'IP based host name': ex.checkForIPAddress(),
+                           'Hex based host name': ex.checkHexBasedHost(),
+                           'Check for common TLD': ex.checkTLD(),
+                           'Length of path': ex.checkLength(),
+                           'Count ‘-‘ in path': ex.countCharacterInPath('-'),
+                           'Count ‘/‘ in path': ex.countCharacterInPath('/'),
+                           'Count ‘=‘ in path': ex.countCharacterInPath('='),
+                           'Count ‘;‘ in path': ex.countCharacterInPath(';'),
+                           'Count ‘,‘ in path': ex.countCharacterInPath(','),
+                           'Count ‘_‘ in path': ex.countCharacterInPath('_'),
+                           'Count ‘.’ in path': ex.countCharacterInPath('.'),
+                           'Count ‘?’ in path': ex.countCharacterInPath('?'),
+                           'Count ‘&’ in path': ex.countCharacterInPath('&'),
+                           'Username/Password in path': ex.checkForUsernameOrPassword(),
+                           'Check URL protocol': ex.checkURLProtocol()
+                           }
+        return FeatureSwitcher[feature]
 
 
 class Extractor:
@@ -95,18 +96,34 @@ class Extractor:
         self.path = self.parseResults.path
         self.host = self.parseResults.netloc
 
-    def checkURLScheme(self, url):
+    def checkURLProtocol(self, url):
         """
         Checks URL scheme so that it can be properly processed by urlparse
         :param url: string
         :return: A properly formatted URL
         """
-        tokens = self.URL.partition('://')
+        tokens = url.partition('://')
         if len(tokens[1]) == 0:
             # no protocol in front of url
             return '//' + url
         else:
             return url
+
+    def checkURLProtocol(self):
+        """
+        Checks if the URL protocol is https or not
+        :return: 1 if not https, 0 if it is https
+        """
+        tokens = self.URL.partition('://')
+        if len(tokens[1]) == 0:
+            # protocol defaults to http
+            return 1
+        elif tokens[0] == 'https':
+            # checks if URL uses secure connection
+            return 0
+        else:
+            # if not https than it returns 1
+            return 1
 
     def checkForCharacterInHost(self, character):
         """
