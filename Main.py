@@ -1,23 +1,25 @@
 # Robert Dwan
 
+
 import json, sys, os
 
+import uuid
+from datetime import datetime
+
+import joblib
 import numpy as np
 import pandas as pd
-import uuid
-import joblib
 
 from FeatureExtraction.FeatureExtraction import FeatureSet
 from Metrics.VisualizeResults import AlgorithmPerformance
 from ModelBuilder.AlgorithmFactory import AlgorithmFactory as af
-from datetime import datetime
 
 
 class TrainTest:
 
     def __init__(self, algorithm, train_feature_set, train_labels, test_feature_set):
         self.algorithm = algorithm
-        
+
         start_train = datetime.now()
         self.algorithm.fit(train_feature_set, train_labels)
         end_train = datetime.now()
@@ -58,7 +60,7 @@ class OutputGenerator:
 		
 		# Print Metrics to output file
         file = open("%s/metric_report.txt" % path, "w")
-		
+
         file.write("Output for: " + self.ap.algorithm + "\n")
         file.write("\nTime to train: ")
         file.write(str(self.trainTest.train_time))
@@ -69,9 +71,9 @@ class OutputGenerator:
         file.write("\n\nClassification Report:\n")
         file.write(self.ap.createClassificationReport())
         file.write("\n\nAccuracy: " + str(self.ap.calculateAccuracy()))
-		
+
         file.close()
-		
+
 		# Save ROC graph to file
         fig = self.ap.generateROC()
         fig.savefig('%s/ROC_Graph.png' % path, bbox_inches = 'tight')
@@ -85,6 +87,7 @@ class OutputGenerator:
         for category in categories:
             self.print_false_positives(path, category)
 		
+
 def main(json_file):
     with open(json_file) as jf:
         run = json.load(jf)
@@ -104,5 +107,6 @@ def main(json_file):
         ap = AlgorithmPerformance(test_urls, test_labels, tt.prediction, name)
         output = OutputGenerator(tt, ap)
         output.print_all()
+
 
 main(sys.argv[1])
