@@ -11,10 +11,15 @@ from sklearn.preprocessing import label_binarize
 
 class AlgorithmPerformance:
 
-    def __init__(self, training_set, training_output, test_set, test_output, prediction, algorithm):
-        self.features = training_set
-        self.labeled_output = training_output
-        self.data_labels = np.unique(training_output)
+    def __init__(self, test_set, test_output, prediction, algorithm=""):
+        """
+        Initializes parameters to generate algorithm performance metrics
+        :param test_set: the feature set model was tested with
+        :param test_output: the labeled output model was tested with
+        :param prediction: the predicted output of model
+        :param algorithm: algorithm used by model (default is empty string)
+        """
+        self.data_labels = np.unique(test_output)
         self.test_set = test_set
         self.test_output = test_output
         self.prediction = prediction
@@ -117,12 +122,17 @@ class AlgorithmPerformance:
 class FeaturePerformance:
 
     def __init__(self, features, labeled_output):
+        """
+        Initialized parameters needed to evaluate features
+        :param features: FeatureSet
+        :param labeled_output: labeled output of feature set
+        """
         self.features = features
         self.labeled_output = labeled_output
 
     def calculateF_Value(self):
         """
-        calculates ANOVA F-value for the features
+        Calculates ANOVA F-value for the features
         :return: tuple of the set of f-values and a set of p-values
         """
         f_test, p_test = f_classif(self.features, self.labeled_output)
@@ -156,9 +166,9 @@ class FeaturePerformance:
         ax = axes.ravel()
         for j in range(len(self.features.FeatureList)):
             ax[j].scatter(self.features[:, j], self.labeled_output, edgecolor='black', s=10)
-            ax[j].set_title(
-                "{} - F-test={:.2f}, MI={:.2f}, Chi={:.2f}".format(self.features.FeatureList[j], f_test[j],
-                                                                   mutual_info[j]), chi_score[j], fontsize=8)
+            ax[j].set_title("{:s} F-test={:.2f}, MI={:.2f}, Chi={:.2f}".format(self.features.FeatureList[j], f_test[j],
+                                                                               mutual_info[j]), chi_score[j],
+                            fontsize=8)
         plt.tight_layout()
         return plt.gcf()
 
