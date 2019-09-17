@@ -16,6 +16,11 @@ class FeatureSet:
     """
 
     def __init__(self, config_path, url_list):
+        """
+        Initialized parameters needed for the rest of the functions
+        :param config_path: path to feature extraction configuration file
+        :param url_list: list of urls as strings
+        """
         with open(config_path) as fe:
             selectedFeatures = json.load(fe)
         self.FeatureList = list()
@@ -91,12 +96,17 @@ class Extractor:
     """
 
     def __init__(self, url):
+        """
+        Initializes parameters used by extractor functions
+        :param url: a url as a string
+        """
         self.URL = self.checkURLScheme(url)
         self.parseResults = urlparse(self.URL)
         self.path = self.parseResults.path
         self.host = self.parseResults.netloc
 
-    def checkURLProtocol(self, url):
+    @staticmethod
+    def checkURLScheme(url):
         """
         Checks URL scheme so that it can be properly processed by urlparse
         :param url: string
@@ -298,6 +308,8 @@ class Extractor:
         if 'xn--' in self.host:
             return 1
         return 0
+
+
 
 # For Testing functions:
 # extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
