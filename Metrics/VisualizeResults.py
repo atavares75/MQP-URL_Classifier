@@ -10,15 +10,16 @@ from sklearn.preprocessing import label_binarize
 
 class AlgorithmPerformance:
 
-    def __init__(self, test_output, prediction, algorithm=""):
+    def __init__(self, test_urls, test_output, prediction, algorithm=""):
         """
         Initializes parameters to generate algorithm performance metrics
-        :param test_set: the feature set model was tested with
+        :param test_urls: the labeled input the model was tested with 
         :param test_output: the labeled output model was tested with
         :param prediction: the predicted output of model
         :param algorithm: algorithm used by model (default is empty string)
         """
         self.data_labels = np.unique(test_output)
+        self.test_urls = test_urls
         self.test_output = test_output
         self.prediction = prediction
         self.algorithm = algorithm
@@ -50,13 +51,6 @@ class AlgorithmPerformance:
         :return: float
         """
         return accuracy_score(self.test_output, self.prediction)
-
-    @staticmethod
-    def __getAlgorithmName(self, abbreviation):
-        algorithm_dict = {'rf': 'Random Forest', 'lr': 'Logistic Regression', 'svm-l': 'SVM-Linear',
-                          'svm-rbf': 'SVM-rbf'}
-        if abbreviation in algorithm_dict:
-            return algorithm_dict[abbreviation]
 
     def generateROC(self):
         """
