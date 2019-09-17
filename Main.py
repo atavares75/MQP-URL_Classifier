@@ -39,18 +39,33 @@ class OutputGenerator:
         self.trainTest = trainTest
         self.ap = algorithmPerformance
 		
-    def print_false_positives(self, path, label):
-        file = open("%s/%s_false_positives.txt" % (path, label))
-        file.write("Correct Label: URL")
+    def print_false_negatives(self, path, label):
+        file = open("%s/%s_false_negatives.txt" % (path, label), "w")
+        file.write("Incorrect Label: URL\n")
 	
-        correct = self.ab.test_output
-        prediction = self.ab.prediction
-        test_urls = self.ab.test_urls
+        correct = self.ap.test_output
+        prediction = self.ap.prediction
+        test_urls = self.ap.test_urls
+	
+        for i in range (len(correct)):
+            if correct[i] == label:
+                if prediction[i] != label:
+                    file.write(prediction[i] + ": " + str(test_urls[i].encode()) + "\n")
+
+        file.close()
+		
+    def print_false_positives(self, path, label):
+        file = open("%s/%s_false_positives.txt" % (path, label), "w")
+        file.write("Correct Label: URL\n")
+	
+        correct = self.ap.test_output
+        prediction = self.ap.prediction
+        test_urls = self.ap.test_urls
 	
         for i in range (len(correct)):
             if correct[i] != label:
                 if prediction[i] == label:
-                    file.write(correct[i] + ": " + test_urls[i])
+                    file.write(correct[i] + ": " + str(test_urls[i].encode()) + "\n")
 
         file.close()
 		
@@ -84,8 +99,15 @@ class OutputGenerator:
 		# Save false positives
         categories = ['Normal', 'phish', 'malware', 'ransomware', 'BotnetC&C']
 		
+        pos_path = "%s/false_positives" % path
+        os.mkdir(pos_path)
+		
+        neg_path = "%s/false_negatives" % path
+        os.mkdir(neg_path)
+		
         for category in categories:
-            self.print_false_positives(path, category)
+            self.print_false_positives(pos_path, category)
+            self.print_false_negatives(neg_path, category)
 		
 
 def main(json_file):
