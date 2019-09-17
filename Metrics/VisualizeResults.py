@@ -49,7 +49,7 @@ class AlgorithmPerformance:
         Returns the accuracy of the prediction
         :return: float
         """
-        accuracy_score(self.test_output, self.prediction)
+        return accuracy_score(self.test_output, self.prediction)
 
     @staticmethod
     def __getAlgorithmName(self, abbreviation):
