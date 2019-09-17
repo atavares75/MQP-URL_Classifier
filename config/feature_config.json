@@ -10,6 +10,9 @@
       "Feature": "Number of @ in URL"
     },
     {
+      "Feature": "Count % in URL"
+    },
+    {
       "Feature": "Params in URL"
     },
     {
@@ -77,9 +80,6 @@
     },
     {
       "Feature": "Count . in path"
-    },
-    {
-      "Feature": "Count ? in path"
     },
     {
       "Feature": "Count & in path"

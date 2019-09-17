@@ -59,6 +59,7 @@ class FeatureSet:
         FeatureSwitcher = {'Length of URL': ex.checkLength(),
                            'Number of . in URL': ex.countCharacterInURL('.'),
                            'Number of @ in URL': ex.countCharacterInURL('@'),
+                           'Count % in URL': ex.countCharacterInPath('%'),
                            'Params in URL': ex.checkForParams(),
                            'Queries in URL': ex.checkForQueries(),
                            'Fragments in URL': ex.checkForFragments(),
@@ -82,9 +83,8 @@ class FeatureSet:
                            'Count , in path': ex.countCharacterInPath(','),
                            'Count _ in path': ex.countCharacterInPath('_'),
                            'Count . in path': ex.countCharacterInPath('.'),
-                           'Count ? in path': ex.countCharacterInPath('?'),
                            'Count & in path': ex.countCharacterInPath('&'),
-                           'Username/Password in path': ex.checkForUsernameOrPassword(),
+                           'Username/Password in path': ex.checkForUsernameAndPassword(),
                            'Check URL protocol': ex.checkURLProtocol()
                            }
         return FeatureSwitcher[feature]
@@ -102,8 +102,8 @@ class Extractor:
         """
         self.URL = self.checkURLScheme(url)
         self.parseResults = urlparse(self.URL)
-        self.path = self.parseResults.path
-        self.host = self.parseResults.netloc
+        if self.parseResults.hostname is None:
+            self.parseResults.hostname = 'example'
 
     @staticmethod
     def checkURLScheme(url):
@@ -124,11 +124,10 @@ class Extractor:
         Checks if the URL protocol is https or not
         :return: 1 if not https, 0 if it is https
         """
-        tokens = self.URL.partition('://')
-        if len(tokens[1]) == 0:
+        if self.parseResults.scheme is None:
             # protocol defaults to http
             return 1
-        elif tokens[0] == 'https':
+        elif self.parseResults.scheme == 'https':
             # checks if URL uses secure connection
             return 0
         else:
@@ -141,7 +140,7 @@ class Extractor:
         :param character: string
         :return: 1 if character is present, 0 if not
         """
-        return 1 if character in self.host else 0
+        return 1 if character in self.parseResults.hostname else 0
 
     def checkForCharacterInPath(self, character):
         """
@@ -149,7 +148,7 @@ class Extractor:
         :param character: string
         :return: 1 if character is present, 0 if not
         """
-        return 1 if character in self.path else 0
+        return 1 if character in self.parseResults.path else 0
 
     def countCharacterInURL(self, character):
         """
@@ -165,7 +164,7 @@ class Extractor:
         :param character: string
         :return: int
         """
-        return sum(map(lambda x: 1 if character in x else 0, self.host))
+        return sum(map(lambda x: 1 if character in x else 0, self.parseResults.hostname))
 
     def countCharacterInPath(self, character):
         """
@@ -173,7 +172,7 @@ class Extractor:
         :param character: string
         :return: int
         """
-        return sum(map(lambda x: 1 if character in x else 0, self.path))
+        return sum(map(lambda x: 1 if character in x else 0, self.parseResults.path))
 
     def checkLength(self):
         """
@@ -187,9 +186,9 @@ class Extractor:
         Checks if URL uses a non-standard port
         :return: 1 if non-standard port, 0 otherwise
         """
-        port = self.host.rpartition(':')[2]
-        standardPorts = ['80', '443', '8080']
-        if len(port) > 0 and port.isdigit():
+        port = self.parseResults.port
+        standardPorts = [80, 443, 8080]
+        if port is not None:
             if port in standardPorts:
                 return 0
             else:
@@ -224,27 +223,26 @@ class Extractor:
         :return: 1 if not a common TLD, 0 otherwise
         """
         popularTLDs = ['com', 'net', 'gov', 'edu', 'org', 'de']
-        ext = tldextract.extract(self.host)
-        return 0 if ext.domain in popularTLDs else 1
+        ext = tldextract.extract(self.parseResults.hostname)
+        return 0 if ext.suffix in popularTLDs else 1
 
     def checkForIPAddress(self):
         """
         Checks for IP address in URL
         :return: 1 if IP address is in URL, 0 otherwise
         """
-        regex = re.findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})$', self.URL)
-        return 1 if regex is not None else 0
+        regex = re.findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})$', self.parseResults.hostname)
+        return 1 if len(regex) > 0 else 0
 
-    def checkForUsernameOrPassword(self):
+    def checkForUsernameAndPassword(self):
         """
-        Checks for 'username' and 'password' keywords in URL
+        Checks for username and password in URL
         :return: 2 if both keywords present, 1 if only one is present, 0 if neither
         """
-        lowerPath = self.path.lower()
         i = 0
-        if 'username' in lowerPath:
+        if self.parseResults.username is not None:
             i = i + 1
-        if 'password' in lowerPath:
+        if self.parseResults.password is not None:
             i = i + 1
         return i
 
@@ -253,7 +251,7 @@ class Extractor:
         Calculates the entropy of the domain name
         :return: int
         """
-        p, lengths = Counter(self.host), float(len(self.host))
+        p, lengths = Counter(self.parseResults.hostname), float(len(self.parseResults.hostname))
         return -sum(count / lengths * math.log2(count / lengths) for count in p.values())
 
     def checkHexBasedHost(self):
@@ -262,7 +260,7 @@ class Extractor:
         :return: 1 if host name is hex based, 0 otherwise
         """
         try:
-            int(self.URL, 16)
+            int(self.parseResults.hostname, 16)
             return 1
         except ValueError:
             return 0
@@ -272,7 +270,7 @@ class Extractor:
         Checks for digits in domain name
         :return: 1 if domain name contains digits, 0 otherwise
         """
-        for c in self.URL:
+        for c in self.parseResults.hostname:
             if c.isdigit():
                 return 1
         return 0
@@ -282,7 +280,7 @@ class Extractor:
         Checks if domain name is in the Alexa Top 1 Million
         :return: 1 if it is in the Alexa Top 1 Million, 0 otherwise
         """
-        ext = tldextract.extract(self.host)
+        ext = tldextract.extract(self.parseResults.hostname)
         url = ext.domain + '.' + ext.suffix
         if url in alexaSet:
             return 1
@@ -293,10 +291,10 @@ class Extractor:
         Checks if the URL sub-domains are in the Alexa Top 1 Million
         :return: 1 if sub-domain is in Alexa Top 1 Million, 0 otherwise
         """
-        ext = tldextract.extract(self.host)
+        ext = tldextract.extract(self.parseResults.hostname)
         sub_domains = ext.subdomain.split('.')
         for sub in sub_domains:
-            if sub in alexaNameSet:
+            if sub in alexaNameSet and sub != 'www':
                 return 1
         return 0
 
@@ -305,17 +303,6 @@ class Extractor:
         Checks for punycode in URL
         :return: 1 if puny code is present, 0 otherwise
         """
-        if 'xn--' in self.host:
+        if 'xn-' in self.parseResults.hostname:
             return 1
         return 0
-
-# For Testing functions:
-# extractLexicalFeatures(['www.goog-le.com/about', 'http://amazon.org/yep'])
-# getURLScheme('https://www.goog-le.com/about')
-# print(checkForIPAdress('https://www.2345.3453.222.3454.com/about'))
-# checkAlexaTop1Million('www.google.co.uk')
-# dataset = pd.read_csv("data/all_data_labeled.csv")
-
-# Store URLs and their labels
-# urls = dataset.iloc[:, 2].values
-# checkForPunycode(urls[1])
