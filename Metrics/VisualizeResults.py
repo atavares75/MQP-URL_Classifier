@@ -10,7 +10,7 @@ from sklearn.preprocessing import label_binarize
 
 class AlgorithmPerformance:
 
-    def __init__(self, test_set, test_output, prediction, algorithm=""):
+    def __init__(self, test_output, prediction, algorithm=""):
         """
         Initializes parameters to generate algorithm performance metrics
         :param test_set: the feature set model was tested with
@@ -19,7 +19,6 @@ class AlgorithmPerformance:
         :param algorithm: algorithm used by model (default is empty string)
         """
         self.data_labels = np.unique(test_output)
-        self.test_set = test_set
         self.test_output = test_output
         self.prediction = prediction
         self.algorithm = algorithm
