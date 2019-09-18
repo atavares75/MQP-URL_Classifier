@@ -127,7 +127,7 @@ class FeaturePerformance:
         Calculates ANOVA F-value for the features
         :return: tuple of the set of f-values and a set of p-values
         """
-        f_test, p_test = f_classif(self.features, self.labeled_output)
+        f_test, p_test = f_classif(self.features.df.to_numpy(), self.labeled_output)
         return f_test, p_test
 
     def calculateChiX_Score(self):
@@ -135,7 +135,7 @@ class FeaturePerformance:
         Computes chi-squared stats between each non-negative feature and class.
         :return: tuple containing chi2 statistics of each feature and p-values of each feature
         """
-        chi_score, p_val = chi2(self.features, self.labeled_output)
+        chi_score, p_val = chi2(self.features.df.to_numpy(), self.labeled_output)
         return chi_score, p_val
 
     def calculateMutualInformation(self):
@@ -143,7 +143,7 @@ class FeaturePerformance:
         Estimates mutual information for a discrete target variable
         :return: Estimated mutual information between each feature and the target
         """
-        mi = mutual_info_classif(self.features, self.labeled_output)
+        mi = mutual_info_classif(self.features.df.to_numpy(), self.labeled_output)
         return mi
 
     def generateFeaturePlots(self, f_test, mutual_info, chi_score):
@@ -155,13 +155,15 @@ class FeaturePerformance:
         :param chi_score: chi-squared statistic for each feature
         :return: a plt containing subplots fot each feature
         """
+        f = f_test.flatten()
+        m = mutual_info.flatten()
+        c = chi_score.flatten()
         fig, axes = plt.subplots(10, 3, figsize=(9, 9))  # 3 columns each containing 10 figures, total 30 features
         ax = axes.ravel()
         for j in range(len(self.features.FeatureList)):
-            ax[j].scatter(self.features[:, j], self.labeled_output, edgecolor='black', s=10)
-            ax[j].set_title("{:s} F-test={:.2f}, MI={:.2f}, Chi={:.2f}".format(self.features.FeatureList[j], f_test[j],
-                                                                               mutual_info[j]), chi_score[j],
-                            fontsize=8)
+            ax[j].scatter(self.features.df.iloc[:, j], self.labeled_output, edgecolor='black', s=10)
+            ax[j].set_title("{:s} F-test={:.2f}, MI={:.2f}, Chi={:.2f}".format(self.features.FeatureList[j], f[j],
+                                                                               m[j], c[j], fontsize=8))
         plt.tight_layout()
         return plt.gcf()
 

@@ -1,5 +1,7 @@
 import json
 import sys
+import uuid
+
 import pandas as pd
 import numpy as np
 import os
@@ -17,14 +19,9 @@ def main(json_file):
     labels = data['label']
     urls = data['url']
 
-    print("HAVE JSON")
+    fs = FeatureSet(run["feature_set"], urls)
 
-    print("HAVE ALGORITHMS")
-
-    fs = FeatureSet(run["data_set"], urls)
-    feature_set = np.asarray(fs.df)
-
-    fp = FeaturePerformance(feature_set, urls)
+    fp = FeaturePerformance(fs, labels)
 
     f_test, p_tes = fp.calculateF_Value()
     chi_score, p_val = fp.calculateChiX_Score()
@@ -34,18 +31,27 @@ def main(json_file):
     heat_map = fp.buildCorrelationHeatMap()
 
     path = "outputs/FeatureEvaluation"
-    os.mkdir(path)
+    if not os.path.exists(path):
+        os.mkdir(path)
 
-    file = open("%s/features_used.txt" % path, "w")
+    label = uuid.uuid4()
+    file = open("%s/features_eval_%s.txt" % (path,label), "w")
 
     file.write("Features implemented: \n")
-    file.write(*fs.FeatureList, sep="\n")
+    for feature in fs.FeatureList:
+        file.write(feature+"\n")
+
     file.write("\nF-Values: \n")
-    file.write(*f_test, sep="\n")
+    for f in f_test:
+        file.write(str(f)+"\n")
+
     file.write("\nChi2-Values\n")
-    file.write(*chi_score, sep="\n")
+    for c in chi_score:
+        file.write(str(c)+"\n")
+
     file.write("Mutual Information Values")
-    file.write(*mi, sep="\n")
+    for m in mi:
+        file.write(str(m)+"\n")
 
     feature_plots.savefig('%s/Feature-Plots.png' % path, bbox_inches='tight')
     heat_map.savefig('%s/HeatMap.png' % path, bbox_inches='tight')

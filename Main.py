@@ -1,8 +1,9 @@
 # Robert Dwan
 
 
-import json, sys, os
-
+import json
+import os
+import sys
 import uuid
 from datetime import datetime
 
@@ -32,48 +33,49 @@ class TrainTest:
 
         self.test_time = end_test - start_test
 
+
 class OutputGenerator:
 
     def __init__(self, trainTest, algorithmPerformance):
         self.id = uuid.uuid4()
         self.trainTest = trainTest
         self.ap = algorithmPerformance
-		
+
     def print_false_negatives(self, path, label):
         file = open("%s/%s_false_negatives.txt" % (path, label), "w")
         file.write("Incorrect Label: URL\n")
-	
+
         correct = self.ap.test_output
         prediction = self.ap.prediction
         test_urls = self.ap.test_urls
-	
-        for i in range (len(correct)):
+
+        for i in range(len(correct)):
             if correct[i] == label:
                 if prediction[i] != label:
                     file.write(prediction[i] + ": " + str(test_urls[i].encode()) + "\n")
 
         file.close()
-		
+
     def print_false_positives(self, path, label):
         file = open("%s/%s_false_positives.txt" % (path, label), "w")
         file.write("Correct Label: URL\n")
-	
+
         correct = self.ap.test_output
         prediction = self.ap.prediction
         test_urls = self.ap.test_urls
-	
-        for i in range (len(correct)):
+
+        for i in range(len(correct)):
             if correct[i] != label:
                 if prediction[i] == label:
                     file.write(correct[i] + ": " + str(test_urls[i].encode()) + "\n")
 
         file.close()
-		
+
     def print_all(self):
         path = "outputs/%s_%s_Output" % (self.id, self.ap.algorithm)
         os.mkdir(path)
-		
-		# Print Metrics to output file
+
+        # Print Metrics to output file
         file = open("%s/metric_report.txt" % path, "w")
 
         file.write("Output for: " + self.ap.algorithm + "\n")
@@ -89,26 +91,26 @@ class OutputGenerator:
 
         file.close()
 
-		# Save ROC graph to file
+        # Save ROC graph to file
         fig = self.ap.generateROC()
-        fig.savefig('%s/ROC_Graph.png' % path, bbox_inches = 'tight')
-		
-		# Save model 
+        fig.savefig('%s/ROC_Graph.png' % path, bbox_inches='tight')
+
+        # Save model
         joblib.dump(self.trainTest.algorithm, '%s/model.joblib' % path)
-		
-		# Save false positives
+
+        # Save false positives
         categories = ['Normal', 'phish', 'malware', 'ransomware', 'BotnetC&C']
-		
+
         pos_path = "%s/false_positives" % path
         os.mkdir(pos_path)
-		
+
         neg_path = "%s/false_negatives" % path
         os.mkdir(neg_path)
-		
+
         for category in categories:
             self.print_false_positives(pos_path, category)
             self.print_false_negatives(neg_path, category)
-		
+
 
 def main(json_file):
     with open(json_file) as jf:
