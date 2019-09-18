@@ -150,6 +150,7 @@ class FeaturePerformance:
         :return: Estimated mutual information between each feature and the target
         """
         mi = mutual_info_classif(self.features, self.labeled_output)
+        return mi
 
     def generateFeaturePlots(self, f_test, mutual_info, chi_score):
         """

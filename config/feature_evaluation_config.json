@@ -1,0 +1,5 @@
+{
+	"feature_set": "config/feature_config.json",
+	"data_set": "data/full_5050_training_set.csv",
+	"metrics": "inputted here"
+}
