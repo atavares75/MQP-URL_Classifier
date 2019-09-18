@@ -1,0 +1,5 @@
+Correct Label: URL
+phish: b'http://com-ex.ru'
+phish: b'http://valiant.cx'
+phish: b'http://tindersohbet.xyz'
+phish: b'http://eth20.org'

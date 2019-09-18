@@ -1,0 +1,4 @@
+Incorrect Label: URL
+phish: b'citointechnologiesalefor.top'
+phish: b'rowerpovertort.top'
+phish: b'www.ddiopoola.top'
