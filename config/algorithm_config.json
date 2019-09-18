@@ -3,7 +3,8 @@
 		"algorithm": "RandomForest",
 		"parameters": {
 			"n_estimators": 25,
-			"random_state": 11
+			"random_state": 11,
+			"verbose": 100
 		}
 	}]
 }
