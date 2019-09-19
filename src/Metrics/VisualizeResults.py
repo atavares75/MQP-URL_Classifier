@@ -146,26 +146,26 @@ class FeaturePerformance:
         mi = mutual_info_classif(self.features.df.to_numpy(), self.labeled_output)
         return mi
 
-    def generateFeaturePlots(self, f_test, mutual_info, chi_score):
-        """
-        Creates a plot for each of the features in the feature set with their f-value, estimated mutual information,
-        and chi-squared statistic
-        :param f_test: f-values
-        :param mutual_info: estimated mutual information between each feature and the target
-        :param chi_score: chi-squared statistic for each feature
-        :return: a plt containing subplots fot each feature
-        """
-        f = f_test.flatten()
-        m = mutual_info.flatten()
-        c = chi_score.flatten()
-        fig, axes = plt.subplots(10, 3, figsize=(9, 9))  # 3 columns each containing 10 figures, total 30 features
-        ax = axes.ravel()
-        for j in range(len(self.features.FeatureList)):
-            ax[j].scatter(self.features.df.iloc[:, j], self.labeled_output, edgecolor='black', s=10)
-            ax[j].set_title("{:s} F-test={:.2f}, MI={:.2f}, Chi={:.2f}".format(self.features.FeatureList[j], f[j],
-                                                                               m[j], c[j], fontsize=8))
-        plt.tight_layout()
-        return plt.gcf()
+    # def generateFeaturePlots(self, f_test, mutual_info, chi_score):
+    #     """
+    #     Creates a plot for each of the features in the feature set with their f-value, estimated mutual information,
+    #     and chi-squared statistic
+    #     :param f_test: f-values
+    #     :param mutual_info: estimated mutual information between each feature and the target
+    #     :param chi_score: chi-squared statistic for each feature
+    #     :return: a plt containing subplots fot each feature
+    #     """
+    #     f = f_test.flatten()
+    #     m = mutual_info.flatten()
+    #     c = chi_score.flatten()
+    #     fig, axes = plt.subplots(10, 3, figsize=(9, 9))  # 3 columns each containing 10 figures, total 30 features
+    #     ax = axes.ravel()
+    #     for j in range(len(self.features.FeatureList)):
+    #         ax[j].scatter(self.features.df.iloc[:, j], self.labeled_output, edgecolor='black', s=10)
+    #         ax[j].set_title("{:s} F-test={:.2f}, MI={:.2f}, Chi={:.2f}".format(self.features.FeatureList[j], f[j],
+    #                                                                            m[j], c[j], fontsize=8))
+    #     plt.tight_layout()
+    #     return plt.gcf()
 
     def buildCorrelationHeatMap(self):
         """

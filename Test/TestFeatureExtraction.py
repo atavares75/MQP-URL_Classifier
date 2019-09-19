@@ -12,7 +12,7 @@ class TestExtractor(unittest.TestCase):
     ex6 = Extractor('http://username:password@example.com/')
     ex7 = Extractor(
         'http://target/login.asp?userid=bob%27%3b%20update%20logintable%20set%20passwd%3d%270wn3d%27%3b--%00')
-    ex8 = Extractor('xn-pple-43d.com')
+    ex8 = Extractor('https://www.xn--80ak6aa92e.com')
 
     def test_checkProtocol_1(self):
         r = self.ex1.checkURLProtocol()
@@ -109,11 +109,11 @@ class TestExtractor(unittest.TestCase):
 
     def test_checkTLD_1(self):
         r = self.ex1.checkTLD()
-        self.assertEqual(r, 0)
+        self.assertEquals(r, 'com')
 
     def test_checkTLD_2(self):
         r = self.ex2.checkTLD()
-        self.assertEqual(r, 1)
+        self.assertEquals(r, 'co.uk')
 
     def test_checkForIPAddress_1(self):
         r = self.ex1.checkForIPAddress()
@@ -166,6 +166,14 @@ class TestExtractor(unittest.TestCase):
     def test_checkForPunycode_2(self):
         r = self.ex8.checkForPunycode()
         self.assertEqual(r, 1)
+
+    def test_addressLocation(self):
+        r = self.ex8.addressLocation()
+        self.assertEqual(r, 'US')
+
+    def test_dateRegistered(self):
+        r = self.ex2.dateRegistered()
+        self.assertEqual(r, 'US')
 
 
 if __name__ == '__main__':

@@ -1,11 +1,17 @@
 import json
 import math
 import re
+import socket
 from collections import Counter
+from datetime import datetime
 from urllib.parse import urlparse
-
+import category_encoders as ce
+import pandas as pd
 import tldextract
+from ipwhois.asn import IPASN
+from ipwhois.net import Net
 from pandas import DataFrame
+from sklearn.preprocessing import LabelEncoder
 
 from FeatureExtraction import alexaNameSet, alexaSet
 
@@ -27,6 +33,7 @@ class FeatureSet:
         for feature in selectedFeatures["FeatureList"]:
             self.FeatureList.append(feature["Feature"])
         self.df = self.__extractFeatures(url_list)
+        self.columnNames = self.FeatureList.copy()
 
     def __extractFeatures(self, url_list):
         """
@@ -42,58 +49,84 @@ class FeatureSet:
             if type(url) is str:
                 ex = Extractor(url)
                 for feature in self.FeatureList:
-                    data_point.append(self.evaluateFeature(ex, feature))
+                    fun = self.__functionSwitcher(ex, feature)
+                    if fun is None:
+                        continue
+                    else:
+                        method, params = fun
+                    if params is None:
+                        result = method()
+                    else:
+                        result = method(**params)
+                    data_point.append(result)
             else:
                 print(i)
                 print(str(url))
             features.append(data_point)
-        return DataFrame(features, columns=self.FeatureList)
+        df = DataFrame(features, columns=self.FeatureList)
+        obj_df = df.select_dtypes(include=['object']).copy()
+        other_df = df.select_dtypes(exclude=['object']).copy()
+        encoder = LabelEncoder()
+        if not obj_df.empty:
+            encoded_columns = encoder.fit_transform(obj_df).reshape(obj_df.to_numpy().shape)
+            encoded_df = DataFrame(encoded_columns, columns=obj_df.columns)
+        else:
+            encoded_df = obj_df
+        new_df = pd.concat([other_df, encoded_df], axis=1)
+        self.columnNames = new_df.columns
+        return new_df
 
     @staticmethod
-    def evaluateFeature(ex, feature):
+    def __functionSwitcher(ex, feature):
         """
-        :param ex: Extractor instance
-        :param feature: the feature you want evaluated
-        :return: The output from extraction of selected feature
+        Returns tuple of method name and parameters
+        :param ex: the url Extractor object
+        :param feature: string representing the desired feature
+        :return: tuple of method name and parameters
         """
-        FeatureSwitcher = {'Length of URL': ex.checkLength(),
-                           'Number of . in URL': ex.countCharacterInURL('.'),
-                           'Number of @ in URL': ex.countCharacterInURL('@'),
-                           'Count % in URL': ex.countCharacterInPath('%'),
-                           'Params in URL': ex.checkForParams(),
-                           'Queries in URL': ex.checkForQueries(),
-                           'Fragments in URL': ex.checkForFragments(),
-                           'Entropy of Domain name': ex.calculateEntropyOfDomainName(),
-                           'Check for Non Standard port': ex.checkNonStandardPort(),
-                           'Check Alexa Top 1 Million': ex.checkAlexaTop1Million(),
-                           'Check for punycode': ex.checkForPunycode(),
-                           'Check sub-domains': ex.checkSubDomains(),
-                           '- in domain name': ex.checkForCharacterInHost('-'),
-                           'Digits in domain name': ex.checkForDigitsInDomain(),
-                           'Length of host': ex.checkLength(),
-                           'Count . in domain name': ex.countCharacterInHost('.'),
-                           'IP based host name': ex.checkForIPAddress(),
-                           'Hex based host name': ex.checkHexBasedHost(),
-                           'Check for common TLD': ex.checkTLD(),
-                           'Length of path': ex.checkLength(),
-                           'Count - in path': ex.countCharacterInPath('-'),
-                           'Count / in path': ex.countCharacterInPath('/'),
-                           'Count = in path': ex.countCharacterInPath('='),
-                           'Count ; in path': ex.countCharacterInPath(';'),
-                           'Count , in path': ex.countCharacterInPath(','),
-                           'Count _ in path': ex.countCharacterInPath('_'),
-                           'Count . in path': ex.countCharacterInPath('.'),
-                           'Count & in path': ex.countCharacterInPath('&'),
-                           'Username/Password in path': ex.checkForUsernameAndPassword(),
-                           'Check URL protocol': ex.checkURLProtocol()
+        FeatureSwitcher = {'Length of URL': (ex.checkLengthOfURL, None),
+                           'Number of . in URL': (ex.countCharacterInURL, {'character': '.'}),
+                           'Number of @ in URL': (ex.countCharacterInURL, {'character': '@'}),
+                           'Count % in URL': (ex.countCharacterInPath, {'character': '%'}),
+                           'Params in URL': (ex.checkForParams, None),
+                           'Queries in URL': (ex.checkForQueries, None),
+                           'Fragments in URL': (ex.checkForFragments, None),
+                           'Entropy of Domain name': (ex.calculateEntropyOfDomainName, None),
+                           'Check for Non Standard port': (ex.checkNonStandardPort, None),
+                           'Check Alexa Top 1 Million': (ex.checkAlexaTop1Million, None),
+                           'Check for punycode': (ex.checkForPunycode, None),
+                           'Check sub-domains': (ex.checkSubDomains, None),
+                           '- in domain name': (ex.checkForCharacterInHost, {'character': '-'}),
+                           'Digits in domain name': (ex.checkForDigitsInDomain, None),
+                           'Length of host': (ex.checkLengthOfHostname, None),
+                           'Count . in domain name': (ex.countCharacterInHost, {'character': '.'}),
+                           'IP based host name': (ex.checkForIPAddress, None),
+                           'Hex based host name': (ex.checkHexBasedHost, None),
+                           'Check TLD': (ex.checkTLD, None),
+                           'Length of path': (ex.checkLengthOfPath, None),
+                           'Count - in path': (ex.countCharacterInPath, {'character': '-'}),
+                           'Count / in path': (ex.countCharacterInPath, {'character': '/'}),
+                           'Count = in path': (ex.countCharacterInPath, {'character': '='}),
+                           'Count ; in path': (ex.countCharacterInPath, {'character': ';'}),
+                           'Count , in path': (ex.countCharacterInPath, {'character': ','}),
+                           'Count _ in path': (ex.countCharacterInPath, {'character': '_'}),
+                           'Count . in path': (ex.countCharacterInPath, {'character': '.'}),
+                           'Count & in path': (ex.countCharacterInPath, {'character': '&'}),
+                           'Username/Password in path': (ex.checkForUsernameAndPassword, None),
+                           'Check URL protocol': (ex.checkURLProtocol, None),
+                           'IP Address Location': (ex.addressLocation, None),
+                           'Address Registry': (ex.addressRegistry, None),
+                           'Date Registered': (ex.dateRegistered, None)
                            }
-        return FeatureSwitcher[feature]
+        fun = FeatureSwitcher.get(feature)
+        return fun
 
 
 class Extractor:
     """
     Class that takes url and extracts features from it
     """
+    results = None
 
     def __init__(self, url):
         """
@@ -102,8 +135,6 @@ class Extractor:
         """
         self.URL = self.checkURLScheme(url)
         self.parseResults = urlparse(self.URL)
-        if self.parseResults.hostname is None:
-            self.parseResults.hostname = 'example'
 
     @staticmethod
     def checkURLScheme(url):
@@ -174,12 +205,26 @@ class Extractor:
         """
         return sum(map(lambda x: 1 if character in x else 0, self.parseResults.path))
 
-    def checkLength(self):
+    def checkLengthOfURL(self):
         """
         Calculates the length of the URL
         :return: int
         """
         return len(self.URL)
+
+    def checkLengthOfHostname(self):
+        """
+        Calculates the length of the hostname
+        :return: int
+        """
+        return len(self.parseResults.hostname)
+
+    def checkLengthOfPath(self):
+        """
+        Calculates the length of the path
+        :return: int
+        """
+        return len(self.parseResults.path)
 
     def checkNonStandardPort(self):
         """
@@ -219,12 +264,13 @@ class Extractor:
 
     def checkTLD(self):
         """
-        Checks if URL TLD is a common TLD ('com', 'net', 'gov', 'edu', 'org', 'de')
-        :return: 1 if not a common TLD, 0 otherwise
+        Checks Top Level Domain of the URL
+        :return: the TLD, the string xxx if there is no TLD or the tldextract library can't extract it
         """
-        popularTLDs = ['com', 'net', 'gov', 'edu', 'org', 'de']
         ext = tldextract.extract(self.parseResults.hostname)
-        return 0 if ext.suffix in popularTLDs else 1
+        if len(ext.suffix) == 0:
+            return 'xxx'
+        return ext.suffix
 
     def checkForIPAddress(self):
         """
@@ -306,3 +352,50 @@ class Extractor:
         if 'xn-' in self.parseResults.hostname:
             return 1
         return 0
+
+    def addressLocation(self):
+        if self.results is None:
+            try:
+                ip = socket.gethostbyname(self.parseResults.hostname)
+                net = Net(ip)
+                obj = IPASN(net)
+                self.results = obj.lookup()
+                country = self.results['asn_country_code']
+                return country
+            except:
+                return 0
+        else:
+            country = self.results['asn_country_code']
+            return country
+
+    def addressRegistry(self):
+        if self.results is None:
+            try:
+                ip = socket.gethostbyname(self.parseResults.hostname)
+                net = Net(ip)
+                obj = IPASN(net)
+                self.results = obj.lookup()
+                registry = self.results['asn_registry']
+                return registry
+            except:
+                return 0
+        else:
+            registry = self.results['asn_registry']
+            return registry
+
+    def dateRegistered(self):
+        if self.results is None:
+            try:
+                ip = socket.gethostbyname(self.parseResults.hostname)
+                net = Net(ip)
+                obj = IPASN(net)
+                self.results = obj.lookup()
+                today = datetime.today()
+                date_registered = datetime.strptime(self.results['asn_date'], '%Y-%m-%d')
+                return (today - date_registered).days
+            except:
+                return 0
+        else:
+            today = datetime.today()
+            date_registered = datetime.strptime(self.results['asn_date'], '%Y-%m-%d')
+            return (today - date_registered).days

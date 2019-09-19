@@ -89,15 +89,6 @@
     },
     {
       "Feature": "Check URL protocol"
-    },
-    {
-      "Feature": "IP Address Location"
-    },
-    {
-      "Feature": "Address Registry"
-    },
-    {
-      "Feature": "Date Registered"
     }
   ]
 }
