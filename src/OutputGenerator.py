@@ -1,13 +1,6 @@
 # Robert Dwan 
 
-<<<<<<< Updated upstream
-import joblib
-import os
-import uuid
-=======
 import os, joblib
->>>>>>> Stashed changes
-
 
 class OutputGenerator:
 

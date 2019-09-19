@@ -1,0 +1,14 @@
+{ 
+	"algorithm": "RandomForest",
+	"tuning_param": "n_estimators",
+	"parameters": {
+		"radom_state": 11
+	},
+	"max": 100,
+	"min": 50,
+	"step": 5,
+	"feature_set": "../config/feature_config.json",
+	"training_set": "../data/8020_training_set.csv",
+	"testing_set": "../data/labeled_test_set.csv",
+	"metrics": "inputted here"
+}
