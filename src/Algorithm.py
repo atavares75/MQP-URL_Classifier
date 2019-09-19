@@ -1,5 +1,7 @@
 # Robert Dwan
 
+import uuid
+
 from datetime import datetime
 from Metrics.VisualizeResults import AlgorithmPerformance
 
@@ -9,6 +11,7 @@ class Algorithm:
 		self.name = name
 		self.parameters = parameters
 		self.algorithm = algorithm
+		self.id = uuid.uuid4()
 		
 	def run(self, training_set, testing_set):
 		start_train = datetime.now()

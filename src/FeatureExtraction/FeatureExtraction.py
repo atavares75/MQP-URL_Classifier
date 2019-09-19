@@ -5,7 +5,6 @@ import socket
 from collections import Counter
 from datetime import datetime
 from urllib.parse import urlparse
-
 import pandas as pd
 import tldextract
 from ipwhois.asn import IPASN

@@ -1,7 +1,7 @@
 { 
 	"algorithm": "../config/algorithm_config.json",
 	"feature_set": "../config/feature_config.json",
-	"training_set": "../data/5050_training_set.csv",
+	"training_set": "../data/8020_training_set.csv",
 	"testing_set": "../data/labeled_test_set.csv",
 	"metrics": "inputted here"
 }
