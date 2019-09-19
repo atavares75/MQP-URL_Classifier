@@ -1,9 +1,6 @@
 # Robert Dwan 
 
-import joblib
-import os
-import uuid
-
+import os, joblib
 
 class OutputGenerator:
 
@@ -13,7 +10,6 @@ class OutputGenerator:
         :PARAM trainTest: the TrainTest object
         :PARAM algorithmPerformance: the AlgorithmPerformance object
         """
-        self.id = uuid.uuid4()
         self.model = model
         self.testing_set = testing_set
 
@@ -48,8 +44,8 @@ class OutputGenerator:
     def print_all(self):
         """
         Prints all output to a txt file, saves the ROC graph as a PNG, and saves the model
-        """
-        path = "../outputs/%s_%s_Output" % (self.id, self.model.name)
+		"""
+        path = "../outputs/%s_%s_Output" % (self.model.id, self.model.name)
         os.mkdir(path)
 
         # Print Metrics to output file
