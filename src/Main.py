@@ -1,10 +1,12 @@
 # Robert Dwan
 
-import json, sys
+import json
+import sys
 
-from ModelBuilder.AlgorithmFactory import AlgorithmFactory as af
 from DataSet import DataSet
+from ModelBuilder.AlgorithmFactory import AlgorithmFactory as af
 from OutputGenerator import OutputGenerator
+
 
 def main(json_file):
     with open(json_file) as jf:
@@ -20,5 +22,6 @@ def main(json_file):
         algorithm.run(training_data_set, testing_data_set)
         output = OutputGenerator(algorithm, testing_data_set)
         output.print_all()
+
 
 main(sys.argv[1])

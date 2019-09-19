@@ -1,4 +1,5 @@
 from itertools import cycle
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -173,6 +174,6 @@ class FeaturePerformance:
         :return: a plot containing the heat map
         """
         correlation = self.features.df.corr(method='kendall')
-        ax = sns.heatmap(correlation, xticklabels=True, yticklabels=True, vmin=0, vmax=1, linewidths=.2, cmap="YlGnBu",
-                         square=True)
+        sns.heatmap(correlation, xticklabels=True, yticklabels=True, vmin=0, vmax=1, linewidths=.2, cmap="YlGnBu",
+                    square=True)
         return plt.gcf()

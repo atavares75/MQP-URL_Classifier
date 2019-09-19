@@ -5,7 +5,6 @@ import uuid
 
 import pandas as pd
 from pandas import DataFrame
-
 from FeatureExtraction.FeatureExtraction import FeatureSet
 from Metrics.VisualizeResults import FeaturePerformance
 
@@ -22,23 +21,24 @@ class FeatureEvaluation:
         mi = fp.calculateMutualInformation()
 
         label = uuid.uuid4()
-        path = "outputs/FeatureEvaluation_%s" % label
+        path = "../outputs/FeatureEvaluation_%s" % label
         if not os.path.exists(path):
             os.mkdir(path)
 
         heat_map = fp.buildCorrelationHeatMap()
         heat_map.savefig('%s/HeatMap.png' % path, bbox_inches='tight')
 
-        file = open("%s/features_eval.txt" % path, "w")
+        file = open("%s/features_eval.csv" % path, "w")
 
         df = DataFrame(columns=fs.FeatureList, index=['F-Values', 'Chi2-Values', 'Mutual Info Values'])
         df.iloc[0] = f_test
         df.iloc[1] = chi_score
         df.iloc[2] = mi
 
-        file.write(df.to_string)
+        df.to_csv(file)
 
         file.close()
+        print(label)
 
 
 def main(json_file):

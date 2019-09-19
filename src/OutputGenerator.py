@@ -1,14 +1,15 @@
 # Robert Dwan 
 
-import os, joblib, uuid
+import joblib
+import os
+import uuid
 
-from Algorithm import Algorithm
 
 class OutputGenerator:
 
     def __init__(self, model, testing_set):
         """
-		The initializes the varibles in the OutputGenerator class
+        The initializes the varibles in the OutputGenerator class
         :PARAM trainTest: the TrainTest object
         :PARAM algorithmPerformance: the AlgorithmPerformance object
         """
@@ -25,7 +26,7 @@ class OutputGenerator:
         """
         pos_file = open("%s/%s_false_positives.txt" % (pos_path, label), "w")
         pos_file.write("Correct Label: URL\n")
-        
+
         neg_file = open("%s/%s_false_negatives.txt" % (neg_path, label), "w")
         neg_file.write("Incorrect Label: URL\n")
 
@@ -47,7 +48,7 @@ class OutputGenerator:
     def print_all(self):
         """
         Prints all output to a txt file, saves the ROC graph as a PNG, and saves the model
-		"""
+        """
         path = "../outputs/%s_%s_Output" % (self.id, self.model.name)
         os.mkdir(path)
 
