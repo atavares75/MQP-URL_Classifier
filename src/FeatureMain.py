@@ -4,9 +4,9 @@ import sys
 import uuid
 
 import pandas as pd
-from pandas import DataFrame
 from FeatureExtraction.FeatureExtraction import FeatureSet
 from Metrics.VisualizeResults import FeaturePerformance
+from pandas import DataFrame
 
 
 class FeatureEvaluation:
@@ -30,10 +30,11 @@ class FeatureEvaluation:
 
         file = open("%s/features_eval.csv" % path, "w")
 
-        df = DataFrame(columns=fs.FeatureList, index=['F-Values', 'Chi2-Values', 'Mutual Info Values'])
+        df = DataFrame(columns=fs.FeatureList, index=['F-Values', 'Chi2-Score', 'P-Value', 'Mutual Info Values'])
         df.iloc[0] = f_test
         df.iloc[1] = chi_score
-        df.iloc[2] = mi
+        df.iloc[2] = p_val
+        df.iloc[3] = mi
 
         df.to_csv(file)
 
@@ -45,12 +46,10 @@ def main(json_file):
     with open(json_file) as jf:
         run = json.load(jf)
 
-    data = pd.read_csv(run["data_set"])
-
-    labels = data['label']
-    urls = data['url']
-
     for feature in run["feature_set"]:
+        data = pd.read_csv(feature["data_set"])
+        labels = data['label']
+        urls = data['url']
         FeatureEvaluation(feature["path"], urls, labels)
 
 

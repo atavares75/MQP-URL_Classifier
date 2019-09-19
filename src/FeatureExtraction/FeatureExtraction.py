@@ -101,7 +101,6 @@ class FeatureSet:
                            'Length of host': (ex.checkLengthOfHostname, None),
                            'Count . in domain name': (ex.countCharacterInHost, {'character': '.'}),
                            'IP based host name': (ex.checkForIPAddress, None),
-                           'Hex based host name': (ex.checkHexBasedHost, None),
                            'Check TLD': (ex.checkTLD, None),
                            'Length of path': (ex.checkLengthOfPath, None),
                            'Count - in path': (ex.countCharacterInPath, {'character': '-'}),
@@ -299,17 +298,6 @@ class Extractor:
         """
         p, lengths = Counter(self.parseResults.hostname), float(len(self.parseResults.hostname))
         return -sum(count / lengths * math.log2(count / lengths) for count in p.values())
-
-    def checkHexBasedHost(self):
-        """
-        Checks if host name is hex based
-        :return: 1 if host name is hex based, 0 otherwise
-        """
-        try:
-            int(self.parseResults.hostname, 16)
-            return 1
-        except ValueError:
-            return 0
 
     def checkForDigitsInDomain(self):
         """

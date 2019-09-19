@@ -7,19 +7,10 @@
       "Feature": "Number of . in URL"
     },
     {
-      "Feature": "Number of @ in URL"
-    },
-    {
       "Feature": "Count % in URL"
     },
     {
-      "Feature": "Params in URL"
-    },
-    {
       "Feature": "Queries in URL"
-    },
-    {
-      "Feature": "Fragments in URL"
     },
     {
       "Feature": "Entropy of Domain name"
@@ -29,9 +20,6 @@
     },
     {
       "Feature": "Check Alexa Top 1 Million"
-    },
-    {
-      "Feature": "Check for punycode"
     },
     {
       "Feature": "Check sub-domains"
@@ -52,9 +40,6 @@
       "Feature": "IP based host name"
     },
     {
-      "Feature": "Hex based host name"
-    },
-    {
       "Feature": "Check TLD"
     },
     {
@@ -67,37 +52,13 @@
       "Feature": "Count / in path"
     },
     {
-      "Feature": "Count = in path"
-    },
-    {
-      "Feature": "Count ; in path"
-    },
-    {
       "Feature": "Count , in path"
-    },
-    {
-      "Feature": "Count _ in path"
-    },
-    {
-      "Feature": "Count . in path"
-    },
-    {
-      "Feature": "Count & in path"
     },
     {
       "Feature": "Username/Password in path"
     },
     {
       "Feature": "Check URL protocol"
-    },
-    {
-      "Feature": "IP Address Location"
-    },
-    {
-      "Feature": "Address Registry"
-    },
-    {
-      "Feature": "Date Registered"
     }
   ]
 }
