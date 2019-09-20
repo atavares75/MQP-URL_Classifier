@@ -9,6 +9,11 @@ from OutputGenerator import OutputGenerator
 
 
 def main(json_file):
+	"""
+	This method runs through all the algorithms in the algorithm config file and outputs
+	their metrics 
+	:PARAM json_file: the config file with algorithm, fearture_set, and data_set information
+	"""
 	with open(json_file) as jf:
 		run = json.load(jf)
 

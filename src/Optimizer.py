@@ -7,6 +7,12 @@ from DataSet import DataSet
 from OutputGenerator import OutputGenerator
 
 def main(json_file):
+	"""
+	This method runs an algorithm several times while changing the tuning_param
+	This will output metrics for all run and identify the value for the tuning_param
+	with the highest accuracy.
+	:PARAM json_file: the config file containing the algorithm and the values to use
+	"""
 	with open(json_file) as jf:
 		run = json.load(jf)
 
@@ -27,6 +33,7 @@ def main(json_file):
 	
 	i = min
 	while i <= max:
+		print("Number of trees: " + str(i))
 		temp_params = parameters
 		temp_params.update({tuning_param: i})
 		algorithm = af.get_algorithm(name, temp_params)
@@ -42,6 +49,7 @@ def main(json_file):
 			
 		i += step
 		
-	print(best[0].id + best[1])
+	print(best[0].id, end=" ")
+	print(best[1])
 
 main(sys.argv[1])
