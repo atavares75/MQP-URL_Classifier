@@ -14,6 +14,7 @@ def main(json_file):
 	testing_data_set = DataSet(run["testing_set"])
 	print("HAVE DATA")
 	training_data_set.set_features(run["feature_set"])
+	print("HALFWAY")
 	testing_data_set.set_features(run["feature_set"])
 	print("HAVE FEATURES")	
 		
@@ -24,10 +25,11 @@ def main(json_file):
 	max = run["max"]
 	step = run["step"]
 	
-	i = self.min
-	while i <= self.max:
-		temp_params = paramters.append({self.tuning_param, i})
-		algorithm = af.get_algorithm(self.name, temp_params)
+	i = min
+	while i <= max:
+		temp_params = parameters
+		temp_params.update({tuning_param: i})
+		algorithm = af.get_algorithm(name, temp_params)
 		
 		if i == min:
 			best = [algorithm, min]
@@ -35,10 +37,11 @@ def main(json_file):
 		algorithm.run(training_data_set, testing_data_set)
 		output = OutputGenerator(algorithm, testing_data_set)
 		output.print_all()
-		if algorithm.performance.getAccuracy() > best[0].performance.getAccuracy():
+		if algorithm.performance.calculateAccuracy() > best[0].performance.calculateAccuracy():
 			best = [algorithm, i]
 			
-		print(best)
 		i += step
+		
+	print(best[0].id + best[1])
 
 main(sys.argv[1])

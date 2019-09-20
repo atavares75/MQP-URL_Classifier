@@ -13,4 +13,4 @@ class DataSet:
 		self.urls = self.data['url']
 		
 	def set_features(self, json_file):
-		self.features = FeatureSet(json_file, self.urls).df.to_numpy()
+		self.features = np.asarray(FeatureSet(json_file, self.urls).df)
