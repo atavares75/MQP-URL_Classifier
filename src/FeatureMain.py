@@ -5,7 +5,7 @@ import uuid
 
 import pandas as pd
 from FeatureExtraction.FeatureExtraction import FeatureSet
-from Metrics.VisualizeResults import FeaturePerformance
+from Metrics.FeaturePerformance import FeaturePerformance
 from pandas import DataFrame
 
 
