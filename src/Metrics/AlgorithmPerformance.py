@@ -39,14 +39,14 @@ class AlgorithmPerformance:
 
     def createClassificationReport(self):
         """
-        Creates a classification report
+        Wrapper function for sklearn.metrics classification_report function
         :return: returns a dictionary containing classification report
         """
         return classification_report(self.test_output, self.prediction)
 
     def calculateAccuracy(self):
         """
-        Returns the accuracy of the prediction
+        Wrapper function for sklearn.metrics accuracy_score function
         :return: float
         """
         return accuracy_score(self.test_output, self.prediction)

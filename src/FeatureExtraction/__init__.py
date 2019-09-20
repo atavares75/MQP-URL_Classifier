@@ -7,7 +7,6 @@ import requests
 
 zip_file_url = "http://s3.amazonaws.com/alexa-static/top-1m.csv.zip"
 
-
 if not os.path.exists('../data/top-1m.csv'):
     r = requests.get(zip_file_url)
     z = zipfile.ZipFile(io.BytesIO(r.content))
@@ -22,8 +21,7 @@ for name in alexaSet:
     alexaNameSet.add(tokens[0])
 
 
-@staticmethod
-def __functionSwitcher(ex, feature):
+def functionSwitcher(ex, feature):
     """
     Returns tuple of method name and parameters
     :param ex: the url Extractor object
