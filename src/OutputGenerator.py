@@ -45,7 +45,7 @@ class OutputGenerator:
         """
         Prints all output to a txt file, saves the ROC graph as a PNG, and saves the model
 		"""
-        path = "../outputs/%s_%s_Output" % (self.model.id, self.model.name)
+        path = "../../outputs/%s_%s_Output" % (self.model.id, self.model.name)
         os.mkdir(path)
 
         # Print Metrics to output file

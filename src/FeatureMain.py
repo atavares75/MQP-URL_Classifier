@@ -21,7 +21,7 @@ class FeatureEvaluation:
         mi = fp.calculateMutualInformation()
 
         label = uuid.uuid4()
-        path = "../outputs/FeatureEvaluation_%s" % label
+        path = "../../outputs/FeatureEvaluation_%s" % label
         if not os.path.exists(path):
             os.mkdir(path)
 
