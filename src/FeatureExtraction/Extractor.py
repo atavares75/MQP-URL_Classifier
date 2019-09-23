@@ -120,14 +120,17 @@ class Extractor:
         Checks if URL uses a non-standard port
         :return: 1 if non-standard port, 0 otherwise
         """
-        port = self.parseResults.port
-        standardPorts = [80, 443, 8080]
-        if port is not None:
-            if port in standardPorts:
-                return 0
+        try:
+            port = self.parseResults.port
+            standardPorts = [80, 443, 8080]
+            if port is not None:
+                if port in standardPorts:
+                    return 0
+                else:
+                    return 1
             else:
-                return 1
-        else:
+                return 0
+        except:
             return 0
 
     def checkForFragments(self):
@@ -156,10 +159,13 @@ class Extractor:
         Checks Top Level Domain of the URL
         :return: the TLD, the string xxx if there is no TLD or the tldextract library can't extract it
         """
-        ext = tldextract.extract(self.parseResults.hostname)
-        if len(ext.suffix) == 0:
+        try:
+            ext = tldextract.extract(self.parseResults.hostname)
+            if len(ext.suffix) == 0 or ext.suffix is None:
+                return 'xxx'
+            return ext.suffix
+        except:
             return 'xxx'
-        return ext.suffix
 
     def checkForIPAddress(self):
         """
@@ -204,23 +210,29 @@ class Extractor:
         Checks if domain name is in the Alexa Top 1 Million
         :return: 1 if it is in the Alexa Top 1 Million, 0 otherwise
         """
-        ext = tldextract.extract(self.parseResults.hostname)
-        url = ext.domain + '.' + ext.suffix
-        if url in alexaSet:
-            return 1
-        return 0
+        try:
+            ext = tldextract.extract(self.parseResults.hostname)
+            url = ext.domain + '.' + ext.suffix
+            if url in alexaSet:
+                return 1
+            return 0
+        except:
+            return 0
 
     def checkSubDomains(self):
         """
         Checks if the URL sub-domains are in the Alexa Top 1 Million
         :return: 1 if sub-domain is in Alexa Top 1 Million, 0 otherwise
         """
-        ext = tldextract.extract(self.parseResults.hostname)
-        sub_domains = ext.subdomain.split('.')
-        for sub in sub_domains:
-            if sub in alexaNameSet and sub != 'www':
-                return 1
-        return 0
+        try:
+            ext = tldextract.extract(self.parseResults.hostname)
+            sub_domains = ext.subdomain.split('.')
+            for sub in sub_domains:
+                if sub in alexaNameSet and sub != 'www':
+                    return 1
+            return 0
+        except:
+            return 0
 
     def checkForPunycode(self):
         """

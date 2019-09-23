@@ -7,7 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
-
+from sklearn.semi_supervised import LabelSpreading
 
 class AlgorithmFactory:
 
@@ -26,6 +26,8 @@ class AlgorithmFactory:
             algorithm = Algorithm(algorithm_type, parameters, LinearSVC(**parameters))
         elif algorithm_type == "SVM-RBF":
             algorithm = Algorithm(algorithm_type, parameters, SVC(**parameters))
+        elif algorithm_type == 'Semi':
+            algorithm = Algorithm(algorithm_type, parameters, LabelSpreading(**parameters))
         else:
             print("Error: Invalid algorithm")
             sys.exit()
