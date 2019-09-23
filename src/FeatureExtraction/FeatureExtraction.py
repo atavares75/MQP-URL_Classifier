@@ -25,7 +25,6 @@ class FeatureSet:
         for feature in selectedFeatures["FeatureList"]:
             self.FeatureList.append(feature["Feature"])
         self.df = self.__extractFeatures(url_list)
-        self.columnNames = self.FeatureList.copy()
 
     def __extractFeatures(self, url_list):
         """
@@ -65,7 +64,6 @@ class FeatureSet:
         else:
             encoded_df = obj_df
         new_df = pd.concat([other_df, encoded_df], axis=1)
-        self.columnNames = new_df.columns
         return new_df
 
 

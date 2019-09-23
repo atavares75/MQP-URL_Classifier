@@ -11,14 +11,10 @@ from pandas import DataFrame
 
 class FeatureEvaluation:
 
-    def __init__(self, feature_set_config_path, urls, labels):
+    def __init__(self, feature_set_config_path, urls, labels, metric):
         fs = FeatureSet(feature_set_config_path, urls)
 
         fp = FeaturePerformance(fs, labels)
-
-        f_test, p_tes = fp.calculateF_Value()
-        chi_score, p_val = fp.calculateChiX_Score()
-        mi = fp.calculateMutualInformation()
 
         label = uuid.uuid4()
         path = "../../outputs/FeatureEvaluation_%s" % label
@@ -30,11 +26,16 @@ class FeatureEvaluation:
 
         file = open("%s/features_eval.csv" % path, "w")
 
-        df = DataFrame(columns=fs.FeatureList, index=['F-Values', 'Chi2-Score', 'P-Value', 'Mutual Info Values'])
-        df.iloc[0] = f_test
-        df.iloc[1] = chi_score
-        df.iloc[2] = p_val
-        df.iloc[3] = mi
+        if metric == "chi2":
+            score, p_val = fp.calculateChiX_Score()
+            score_name = "Chi-Score"
+        else:
+            score, p_val = fp.calculateF_Value()
+            score_name = "F-Value"
+
+        df = DataFrame(columns=fs.FeatureList, index=[score_name, 'P-Value'])
+        df.iloc[0] = score
+        df.iloc[1] = p_val
 
         df.to_csv(file)
 
@@ -50,7 +51,8 @@ def main(json_file):
         data = pd.read_csv(feature["data_set"])
         labels = data['label']
         urls = data['url']
-        FeatureEvaluation(feature["path"], urls, labels)
+        metric = feature["metric"]
+        FeatureEvaluation(feature["path"], urls, labels, metric)
 
 
 main(sys.argv[1])
