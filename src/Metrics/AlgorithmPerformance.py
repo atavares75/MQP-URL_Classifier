@@ -108,3 +108,9 @@ class AlgorithmPerformance:
         plt.title(self.algorithm + ' - Multi-class ROC Curve Plot')
         plt.legend(loc="lower right")
         return plt.gcf()
+		
+    def get_results(self, metric):
+        if metric == "accuracy":
+            return self.calculateAccuracy()
+        else:
+            return -1
