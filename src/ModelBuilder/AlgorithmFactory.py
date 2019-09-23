@@ -1,8 +1,8 @@
-# Robert Dwan
+# Robert Dwan 
 
 import json, sys
 
-from src.Algorithm import Algorithm
+from ModelBuilder.Algorithm import Algorithm
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
