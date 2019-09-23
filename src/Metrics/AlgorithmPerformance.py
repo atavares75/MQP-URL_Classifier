@@ -110,7 +110,14 @@ class AlgorithmPerformance:
         return plt.gcf()
 		
     def get_results(self, metric):
+        """
+        This method returns the wanted metric inputted by the user
+        :PARAM metric: the wanted metric inputed by the user
+        :RETURN: the value of the wanted metric
+        """
         if metric == "accuracy":
             return self.calculateAccuracy()
-        else:
+        elif metric == "false_positives":
+            return -1
+        elif metric == "false_negatives":
             return -1

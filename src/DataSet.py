@@ -12,6 +12,7 @@ class DataSet:
 			self.data = pd.read_csv(csv_file, dtype={"label": object, "url": object})
 		else:
 			self.data = urls
+			
 	def __init__(self, csv_file):
 		"""
 		Initialize the varaibles for the data set
