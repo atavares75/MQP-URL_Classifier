@@ -22,11 +22,21 @@ class AlgorithmPerformance:
         self.test_output = test_output
         self.prediction = prediction
         self.algorithm = algorithm
+        self.cmtx = self.createConfusionMatrix()
+		
+        self.FP = self.cmtx.sum(axis=0) - np.diag(self.cmtx)
+        print(self.FP)
+        self.FN = self.cmtx.sum(axis=1) - np.diag(self.cmtx)
+        print(self.FN)
+        self.TP = np.diag(self.cmtx)
+        print (self.TP)
+        print (self.cmtx.values.sum())
+        self.TN = self.cmtx.values.sum() - (self.FP.values.sum() + self.FN.values.sum() + self.TP.sum())
 
     def createConfusionMatrix(self):
         """
         Creates a confusion matrix from the predicted and actual output
-        :return: a data frame with the confusion matrix and labelled rows and column
+        :return: a data frame with the confusion matrix and labeled rows and column
         """
         c_matrix = confusion_matrix(self.test_output, self.prediction, self.data_labels)
         idx = list()
@@ -109,6 +119,18 @@ class AlgorithmPerformance:
         plt.legend(loc="lower right")
         return plt.gcf()
 		
+    def calculateFalsePostiveRate(self):
+        """
+        :RETURN: returns the false positive rate
+        """
+        return self.FP / (self.FP + self.TN)
+	
+    def calculateFalseNegativeRate(self):
+        """
+        :RETURN: returns the false negative rate
+        """
+        return self.FN / (self.TP + self.FN)
+
     def get_results(self, metric):
         """
         This method returns the wanted metric inputted by the user
@@ -117,7 +139,7 @@ class AlgorithmPerformance:
         """
         if metric == "accuracy":
             return self.calculateAccuracy()
-        elif metric == "false_positives":
-            return -1
-        elif metric == "false_negatives":
-            return -1
+        elif metric == "false_positive":
+            return self.calculateFalsePostiveRate()
+        elif metric == "false_negative":
+            return self.calculateFalseNegativeRate()

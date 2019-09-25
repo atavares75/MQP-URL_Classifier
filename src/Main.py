@@ -1,11 +1,11 @@
 # Robert Dwan
 
-import json
-import sys
+import json, sys, os
 
 from DataSet import DataSet
 from ModelBuilder.AlgorithmFactory import AlgorithmFactory as af
 from OutputGenerator import OutputGenerator
+from datetime import datetime as dt
 
 
 def main(json_file):
@@ -14,6 +14,10 @@ def main(json_file):
     their metrics
     :PARAM json_file: the config file with algorithm, feature_set, and data_set information
     """
+    time = dt.now().strftime('%Y-%m-%d_%H-%M-%S')
+    path = "../../outputs/%s-BatchRun" % time
+    os.mkdir(path)
+	
     with open(json_file) as jf:
         batch = json.load(jf)
 
@@ -34,7 +38,7 @@ def main(json_file):
         for algorithm in algorithms:
             print("Running Algorithm " + algorithm.name)
             algorithm.run(training_data_set, testing_data_set)
-            output = OutputGenerator(algorithm, testing_data_set)
+            output = OutputGenerator(algorithm, testing_data_set, path)
             output.print_all()
 
 

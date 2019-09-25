@@ -4,7 +4,7 @@ import os, joblib
 
 class OutputGenerator:
 
-    def __init__(self, model, testing_set):
+    def __init__(self, model, testing_set, path):
         """
         The initializes the varibles in the OutputGenerator class
         :PARAM trainTest: the TrainTest object
@@ -12,6 +12,7 @@ class OutputGenerator:
         """
         self.model = model
         self.testing_set = testing_set
+        self.path = path
 
     def print_false_pos_and_neg(self, pos_path, neg_path, label):
         """
@@ -45,7 +46,7 @@ class OutputGenerator:
         """
         Prints all output to a txt file, saves the ROC graph as a PNG, and saves the model
 		"""
-        path = "../../outputs/%s_%s_Output" % (self.model.id, self.model.name)
+        path = "%s/%s_%s_Output" % (self.path, self.model.id, self.model.name)
         os.mkdir(path)
 
         # Print Metrics to output file
@@ -57,10 +58,14 @@ class OutputGenerator:
         file.write("\nTime to test: ")
         file.write(str(self.model.test_time))
         file.write("\n\nConfusion Matrix:\n")
-        file.write(self.model.performance.createConfusionMatrix().to_string())
+        file.write(self.model.performance.cmtx.to_string())
         file.write("\n\nClassification Report:\n")
         file.write(self.model.performance.createClassificationReport())
         file.write("\n\nAccuracy: " + str(self.model.performance.calculateAccuracy()))
+        file.write("\n\nFalse Positive Rates:\n")
+        file.write(str(self.model.performance.calculateFalsePostiveRate()))
+        file.write("\n\nFalse Negative Rates:\n")
+        file.write(str(self.model.performance.calculateFalseNegativeRate()))
 
         file.close()
 

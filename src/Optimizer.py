@@ -1,11 +1,11 @@
 # Robert Dwan
 
-import json
-import sys
+import json, sys, os
 
 from DataSet import DataSet
 from ModelBuilder.AlgorithmFactory import AlgorithmFactory as af
 from OutputGenerator import OutputGenerator
+from datetime import datetime as dt
 
 def main(json_file):
 	"""
@@ -14,6 +14,10 @@ def main(json_file):
 	with the highest accuracy.
 	:PARAM json_file: the config file containing the algorithm and the values to use
 	"""
+	time = dt.now().strftime('%Y-%m-%d_%H-%M-%S')
+	path = "../../outputs/%s-OptimizedRun" % time
+	os.mkdir(path)
+	
 	with open(json_file) as jf:
 		run = json.load(jf)
 
@@ -33,7 +37,7 @@ def main(json_file):
 	steps = run["step"]
 	metric = run["metric"]
 
-	file = open("../../outputs/Optimized_Results.txt", "w")
+	file = open("%s/Optimized_Results.txt" % path, "w")
 	
 	if (len(tuning_params) == 2):
 		i = mins[0]
@@ -50,14 +54,17 @@ def main(json_file):
 				algorithm.run(training_data_set, testing_data_set)
 		
 				file.write("Parameter values are: " + tuning_params[0] + ": " + str(i) + " and " + tuning_params[1] + ": " + str(j) + "\n")
-				file.write(str(algorithm.id) + " ")
-				file.write(str(algorithm.performance.get_results(metric)))
+				file.write("Run ID: " + str(algorithm.id) + "\n")
+				file.write(metric + "\n" + str(algorithm.performance.get_results(metric)))
 				file.write("\n\n")
 		
-				output = OutputGenerator(algorithm, testing_data_set)
+				output = OutputGenerator(algorithm, testing_data_set, path)
 				output.print_all()
-				if algorithm.performance.get_results(metric) > best[0].performance.get_results(metric):
-					best = [algorithm, [i,j]]
+				
+				if metric == "accuracy" and algorithm.performance.get_results(metric) > best[0].performance.get_results(metric):
+						best = [algorithm, i]
+				elif algorithm.performance.get_results(metric).values.mean() < best[0].performance.get_results(metric).values.mean():
+						best = [algorithm, i]
 		
 				j += steps[0]
 			
@@ -65,8 +72,8 @@ def main(json_file):
 
 			
 		file.write("Best parameter value is " + str(best[1]) + "\n")
-		file.write(str(best[0].id) + " ")
-		file.write(str(best[0].performance.get_results(metric)))
+		file.write("Run ID: " + str(best[0].id) + "\n")
+		file.write(metric + "\n" + str(best[0].performance.get_results(metric)))
 		file.write("\n\n")
 		
 		file.close()
@@ -83,20 +90,22 @@ def main(json_file):
 			algorithm.run(training_data_set, testing_data_set)
 		
 			file.write("Parameter value is " + str(i) + "\n")
-			file.write(str(algorithm.id) + " ")
-			file.write(str(algorithm.performance.get_results(metric)))
+			file.write("Run ID: " + str(algorithm.id) + "\n")
+			file.write(metric + "\n" + str(algorithm.performance.get_results(metric)))
 			file.write("\n\n")
 		
-			output = OutputGenerator(algorithm, testing_data_set)
+			output = OutputGenerator(algorithm, testing_data_set, path)
 			output.print_all()
-			if algorithm.performance.get_results(metric) > best[0].performance.get_results(metric):
-				best = [algorithm, i]
+			if metric == "accuracy" and algorithm.performance.get_results(metric) > best[0].performance.get_results(metric):
+					best = [algorithm, i]
+			elif algorithm.performance.get_results(metric).values.mean() < best[0].performance.get_results(metric).values.mean():
+					best = [algorithm, i]
 	
 			i += steps
 
 		file.write("Best parameter value is " + str(best[1]) + "\n")
-		file.write(str(best[0].id) + " ")
-		file.write(str(best[0].performance.get_results(metric)))
+		file.write("Run ID: " + str(best[0].id) + "\n")
+		file.write(metric + "\n" + str(best[0].performance.get_results(metric)))
 		file.write("\n\n")
 		
 		file.close()
