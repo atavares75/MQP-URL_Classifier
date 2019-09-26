@@ -15,18 +15,26 @@ class OutputGenerator:
         self.testing_set = testing_set
         self.path = path
 
-    def print_false_pos_and_neg(self, pos_path, neg_path, label):
+    def print_samples(self, tpos_path, tneg_path, fpos_path, fneg_path, label):
         """
-        Outputs fasle positives and negatives to separate files
-        :PARAM pos_path: the file path for the false positives
-        :PARAM neg_path: the file path fot the false negatives
+        Outputs false positives and negatives and true positives and negatves to separate files
+        :PARAM tpos_path: the file path for the true positives
+        :PARAM tneg_path: the file path for the true negatives
+        :PARAM fpos_path: the file path for the false positives
+        :PARAM fneg_path: the file path for the false negatives
         :PARAM label: the category wanted for false positives and negatives
         """
-        pos_file = open("%s/%s_false_positives.txt" % (pos_path, label), "w")
-        pos_file.write("Correct Label: URL\n")
+        true_pos_file = open("%s/%s_true_positives.txt" % (tpos_path, label), "w")
+        true_pos_file.write("Correct Label: URL\n")
 
-        neg_file = open("%s/%s_false_negatives.txt" % (neg_path, label), "w")
-        neg_file.write("Incorrect Label: URL\n")
+        true_neg_file = open("%s/%s_true_negatives.txt" % (tneg_path, label), "w")
+        true_neg_file.write("Correct Label: URL\n")
+
+        false_pos_file = open("%s/%s_false_positives.txt" % (fpos_path, label), "w")
+        false_pos_file.write("Correct Label: URL\n")
+
+        false_neg_file = open("%s/%s_false_negatives.txt" % (fneg_path, label), "w")
+        false_neg_file.write("Incorrect Label: URL\n")
 
         correct = self.testing_set.labels
         prediction = self.model.prediction
@@ -35,13 +43,19 @@ class OutputGenerator:
         for i in range(len(correct)):
             if correct[i] != label:
                 if prediction[i] == label:
-                    pos_file.write(correct[i] + ": " + str(test_urls[i]) + "\n")
+                    false_pos_file.write(correct[i] + ": " + str(test_urls[i].encode()) + "\n")
+                else:
+                    true_neg_file.write(correct[i] + ": " + str(test_urls[i].encode()) + "\n")
             else:
                 if prediction[i] != label:
-                    neg_file.write(prediction[i] + ": " + str(test_urls[i]) + "\n")
+                    false_neg_file.write(prediction[i] + ": " + str(test_urls[i].encode()) + "\n")
+                else:
+                    true_pos_file.write(correct[i] + ": " + str(test_urls[i].encode()) + "\n")
 
-        pos_file.close()
-        neg_file.close()
+        true_pos_file.close()
+        true_neg_file.close()
+        false_pos_file.close()
+        false_neg_file.close()
 
     def print_all(self):
         """
@@ -77,17 +91,23 @@ class OutputGenerator:
         # Save model
         joblib.dump(self.model.algorithm, '%s/model.joblib' % path)
 
-        # Save false positives
+        # Save samples of false positives and negatives and true positives and negatives
         categories = ['Normal', 'phish', 'malware', 'ransomware', 'BotnetC&C']
 
-        pos_path = "%s/false_positives" % path
-        os.mkdir(pos_path)
+        tpos_path = "%s/true_positives" % path
+        os.mkdir(tpos_path)
 
-        neg_path = "%s/false_negatives" % path
-        os.mkdir(neg_path)
+        tneg_path = "%s/true_negatives" % path
+        os.mkdir(tneg_path)
+
+        fpos_path = "%s/false_positives" % path
+        os.mkdir(fpos_path)
+
+        fneg_path = "%s/false_negatives" % path
+        os.mkdir(fneg_path)
 
         for category in categories:
-            self.print_false_pos_and_neg(pos_path, neg_path, category)
+            self.print_samples(tpos_path, tneg_path, fpos_path, fneg_path, category)
 
     def print_probability_output(self, tags):
         predictions = np.zeros(shape=(self.testing_set.labels.shape), dtype=object)

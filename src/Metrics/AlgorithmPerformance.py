@@ -25,12 +25,8 @@ class AlgorithmPerformance:
         self.cmtx = self.createConfusionMatrix()
 		
         self.FP = self.cmtx.sum(axis=0) - np.diag(self.cmtx)
-        print(self.FP)
         self.FN = self.cmtx.sum(axis=1) - np.diag(self.cmtx)
-        print(self.FN)
-        self.TP = np.diag(self.cmtx)
-        print (self.TP)
-        print (self.cmtx.values.sum())
+        self.TP = np.diag(self.cmtx)	
         self.TN = self.cmtx.values.sum() - (self.FP.values.sum() + self.FN.values.sum() + self.TP.sum())
 
     def createConfusionMatrix(self):
