@@ -12,7 +12,7 @@ if not os.path.exists('../../data/top-1m.csv'):
     z = zipfile.ZipFile(io.BytesIO(r.content))
     z.extractall('../../data/')
 d = pandas.read_csv('../../data/top-1m.csv', sep=',', header=None, names=['Domain'], index_col=0)
-alexaDict = d.to_dict('list')
+alexaDict = d.head(1000).to_dict('list')
 listOfDomains = list(alexaDict.values())
 alexaSet = set(listOfDomains[0])
 alexaNameSet = set()
@@ -29,9 +29,17 @@ def functionSwitcher(ex, feature):
     :return: tuple of method name and parameters
     """
     FeatureSwitcher = {'Length of URL': (ex.checkLengthOfURL, None),
-                       'Number of . in URL': (ex.countCharacterInURL, {'character': '.'}),
-                       'Number of @ in URL': (ex.countCharacterInURL, {'character': '@'}),
-                       'Count % in URL': (ex.countCharacterInPath, {'character': '%'}),
+                       'Length of path': (ex.checkLengthOfPath, None),
+                       'Length of hostname': (ex.checkLengthOfHostname, None),
+                       'Number . in URL': (ex.countCharacterInURL, {'character': '.'}),
+                       'Number @ in URL': (ex.countCharacterInURL, {'character': '@'}),
+                       'Number % in URL': (ex.countCharacterInPath, {'character': '%'}),
+                       'Number _ in URL': (ex.countCharacterInURL, {'character': '_'}),
+                       'Number - in hostname': (ex.checkForCharacterInHost, {'character': '-'}),
+                       'Number . in hostname': (ex.countCharacterInHost, {'character': '.'}),
+                       'Number ~ in hostname': (ex.countCharacterInHost, {'character': '~'}),
+                       'Number & in URL': (ex.countCharacterInURL, {'character': '&'}),
+                       'Number # in URL': (ex.countCharacterInURL, {'character': '#'}),
                        'Params in URL': (ex.checkForParams, None),
                        'Queries in URL': (ex.checkForQueries, None),
                        'Fragments in URL': (ex.checkForFragments, None),
@@ -40,21 +48,15 @@ def functionSwitcher(ex, feature):
                        'Check Alexa Top 1 Million': (ex.checkAlexaTop1Million, None),
                        'Check for punycode': (ex.checkForPunycode, None),
                        'Check sub-domains': (ex.checkSubDomains, None),
-                       '- in hostname': (ex.checkForCharacterInHost, {'character': '-'}),
-                       'Digits in hostname': (ex.checkForDigitsInDomain, None),
-                       'Length of hostname': (ex.checkLengthOfHostname, None),
-                       'Count . in hostname': (ex.countCharacterInHost, {'character': '.'}),
+                       'Number digits in hostname': (ex.countDigitsInDomain, None),
                        'IP based hostname': (ex.checkForIPAddress, None),
-                       'Check TLD': (ex.checkTLD, None),
-                       'Length of path': (ex.checkLengthOfPath, None),
-                       'Count - in path': (ex.countCharacterInPath, {'character': '-'}),
-                       'Count / in path': (ex.countCharacterInPath, {'character': '/'}),
-                       'Count = in path': (ex.countCharacterInPath, {'character': '='}),
-                       'Count ; in path': (ex.countCharacterInPath, {'character': ';'}),
-                       'Count , in path': (ex.countCharacterInPath, {'character': ','}),
-                       'Count _ in path': (ex.countCharacterInPath, {'character': '_'}),
-                       'Count . in path': (ex.countCharacterInPath, {'character': '.'}),
-                       'Count & in path': (ex.countCharacterInPath, {'character': '&'}),
+                       'Check TLD': (ex.checkCommonTLD, None),
+                       'Number - in path': (ex.countCharacterInPath, {'character': '-'}),
+                       'Number / in path': (ex.countCharacterInPath, {'character': '/'}),
+                       'Number = in path': (ex.countCharacterInPath, {'character': '='}),
+                       'Number ; in path': (ex.countCharacterInPath, {'character': ';'}),
+                       'Number , in path': (ex.countCharacterInPath, {'character': ','}),
+                       'Number . in path': (ex.countCharacterInPath, {'character': '.'}),
                        'Username/Password in URL': (ex.checkForUsernameAndPassword, None),
                        'Check protocol': (ex.checkURLProtocol, None),
                        'IP address location': (ex.addressLocation, None),

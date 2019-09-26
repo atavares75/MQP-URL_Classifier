@@ -143,3 +143,6 @@ class AlgorithmPerformance:
             return self.calculateFalsePostiveRate()
         elif metric == "false_negative":
             return self.calculateFalseNegativeRate()
+
+    def set_prediction(self, new):
+        self.prediction = pd.Series(new)

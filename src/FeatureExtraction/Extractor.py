@@ -154,18 +154,32 @@ class Extractor:
         """
         return 1 if len(self.parseResults.params) > 0 else 0
 
-    def checkTLD(self):
+    # def checkTLD(self):
+    #     """
+    #     Checks Top Level Domain of the URL
+    #     :return: the TLD, the string xxx if there is no TLD or the tldextract library can't extract it
+    #     """
+    #     try:
+    #         ext = tldextract.extract(self.parseResults.hostname)
+    #         if len(ext.suffix) == 0 or ext.suffix is None:
+    #             return 'xxx'
+    #         return ext.suffix
+    #     except:
+    #         return 'xxx'
+
+    def checkCommonTLD(self):
         """
         Checks Top Level Domain of the URL
         :return: the TLD, the string xxx if there is no TLD or the tldextract library can't extract it
         """
         try:
             ext = tldextract.extract(self.parseResults.hostname)
-            if len(ext.suffix) == 0 or ext.suffix is None:
-                return 'xxx'
-            return ext.suffix
+            commonTLDs = ["com", "org", "net", "de", "edu", "gov"]
+            if ext.suffix in commonTLDs:
+                return 1
+            return 0
         except:
-            return 'xxx'
+            return 1
 
     def checkForIPAddress(self):
         """
@@ -195,15 +209,16 @@ class Extractor:
         p, lengths = Counter(self.parseResults.hostname), float(len(self.parseResults.hostname))
         return -sum(count / lengths * math.log2(count / lengths) for count in p.values())
 
-    def checkForDigitsInDomain(self):
+    def countDigitsInDomain(self):
         """
         Checks for digits in domain name
         :return: 1 if domain name contains digits, 0 otherwise
         """
+        i = 0
         for c in self.parseResults.hostname:
             if c.isdigit():
-                return 1
-        return 0
+                i = i + 1
+        return i
 
     def checkAlexaTop1Million(self):
         """

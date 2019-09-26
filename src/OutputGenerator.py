@@ -1,6 +1,7 @@
 # Robert Dwan 
 
 import os, joblib
+import numpy as np
 
 class OutputGenerator:
 
@@ -34,10 +35,10 @@ class OutputGenerator:
         for i in range(len(correct)):
             if correct[i] != label:
                 if prediction[i] == label:
-                    pos_file.write(correct[i] + ": " + str(test_urls[i].encode()) + "\n")
+                    pos_file.write(correct[i] + ": " + str(test_urls[i]) + "\n")
             else:
                 if prediction[i] != label:
-                    neg_file.write(prediction[i] + ": " + str(test_urls[i].encode()) + "\n")
+                    neg_file.write(prediction[i] + ": " + str(test_urls[i]) + "\n")
 
         pos_file.close()
         neg_file.close()
@@ -87,3 +88,20 @@ class OutputGenerator:
 
         for category in categories:
             self.print_false_pos_and_neg(pos_path, neg_path, category)
+
+    def print_probability_output(self, tags):
+        predictions = np.zeros(shape=(self.testing_set.labels.shape), dtype=object)
+        rows, columns = tags.shape
+        for row in range(rows):
+            truth = self.testing_set.labels[row]
+            prediction_correct = False
+            for column in range(columns):
+                if truth == tags[row][column]:
+                    prediction_correct = True
+                    predictions[row] = tags[row][column]
+                elif prediction_correct == False and tags[row][column] in self.model.algorithm.classes_:
+                    predictions[row] = tags[row][column]
+            if predictions[row] == 0:
+                predictions[row] = 'Normal'
+        self.model.performance.set_prediction(predictions)
+        self.print_all()
