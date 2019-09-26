@@ -15,14 +15,21 @@ def main(json_file):
     :PARAM json_file: the config file with algorithm, feature_set, and data_set information
     """
     time = dt.now().strftime('%Y-%m-%d_%H-%M-%S')
-    path = "../../outputs/%s-BatchRun" % time
-    os.mkdir(path)
+    main_path = "../../outputs/%s-BatchRun" % time
+    os.mkdir(main_path)
 	
     with open(json_file) as jf:
-        batch = json.load(jf)
-
+        batch = json.load(jf)	
+		
+    i = 0
     for run in batch["runs"]:
         print("HAVE JSON")
+		
+        metric = run["metric"]
+		
+        path = "%s/Run%s" % (main_path, str(i))
+        os.mkdir(path)
+        file = open("%s/%s.txt" % (path, metric), "w")
 		
         algorithms = af.get_all_algorithms(run["algorithm"])
         print("HAVE ALGORITHMS")
@@ -40,6 +47,13 @@ def main(json_file):
             algorithm.run(training_data_set, testing_data_set)
             output = OutputGenerator(algorithm, testing_data_set, path)
             output.print_all()
-
+            file.write("Algorithm name: " + algorithm.name)
+            file.write("\nParameter values are: " + str(algorithm.parameters))
+            file.write("\nRun ID: " + str(algorithm.id) + "\n")
+            file.write(metric + ":\n" + str(algorithm.performance.get_results(metric)))
+            file.write("\n\n")
+			
+        file.close()
+        i += 1
 
 main(sys.argv[1])
