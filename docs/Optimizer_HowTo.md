@@ -30,9 +30,9 @@ The Optimizer.py script takes in a JSON config file and performs runs on an algo
 * "testing_set"	- path to the csv file that contains the testing data set
 * "metric"	- the metric that the user specifies and will be outputted to a separate txt file
 
-Possible "metric" values are: accuracy, false_positive, and false_negative.
-using accuracy will provide the parameters that produce the greatest accuracy.
-Using false_positive or false_negative will provide the parameters that produce the lowest average rate for the metric.
+Possible "metric" values are: accuracy, false_positive, and false_negative.  
+using accuracy will provide the parameters that produce the greatest accuracy.  
+Using false_positive or false_negative will provide the parameters that produce the lowest average rate for the metric.  
 
 # Command
 
