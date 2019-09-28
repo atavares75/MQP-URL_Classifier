@@ -3,7 +3,7 @@
 The Optimizer.py script takes in a JSON config file and performs runs on an algorithm with one or two parameters being varied. The script produces the results for each run and a .txt file with the best performance based on the metric provided in the config.
 
 # Config Format
-
+```json
 { 
 	"algorithm": "RandomForest",
 	"tuning_param": ["n_estimators", "random_state"],
@@ -18,7 +18,7 @@ The Optimizer.py script takes in a JSON config file and performs runs on an algo
 	"testing_set": "../../data/labeled_test_set.csv",
 	"metric": "accuracy"
 }
-
+```
 "algorithm"	- the name of the algorithm to be run and tested
 "tuning_param"	- List of parameters that will be varied in the run
 "parameters"	- Other parameters for the algorithm that are not varied
