@@ -1,7 +1,8 @@
 # Robert Dwan 
 
-import os, joblib
-import pandas as pd
+import joblib
+import os
+
 
 class OutputGenerator:
 
