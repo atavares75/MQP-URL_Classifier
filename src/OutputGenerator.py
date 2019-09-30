@@ -124,4 +124,5 @@ class OutputGenerator:
             if predictions[row] == 0:
                 predictions[row] = 'Normal'
         self.model.performance.set_prediction(predictions)
+        self.model.performance.createConfusionMatrix()
         self.print_all()

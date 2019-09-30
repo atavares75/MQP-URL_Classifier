@@ -3,13 +3,12 @@
 import json, sys
 
 from ModelBuilder.Algorithm import Algorithm
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier, BaggingClassifier, \
+    VotingClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
 from sklearn.semi_supervised import LabelSpreading, LabelPropagation
-
-from ModelBuilder.ProbabilityAlgorithm import ProbabilityAlgorithm
 
 
 class AlgorithmFactory:
@@ -33,14 +32,33 @@ class AlgorithmFactory:
             algorithm = Algorithm(algorithm_type, parameters, LabelSpreading(**parameters))
         elif algorithm_type == 'Propagation':
             algorithm = Algorithm(algorithm_type, parameters, LabelPropagation(**parameters))
+
         elif algorithm_type == 'AdaBoost':
             if "base_estimator" in parameters:
                 estimator_path = parameters["base_estimator"]
                 algorithm = AlgorithmFactory.get_all_algorithms(estimator_path)[0]
                 parameters["base_estimator"] = algorithm.algorithm
             algorithm = Algorithm(algorithm_type, parameters, AdaBoostClassifier(**parameters))
+
         elif algorithm_type == 'Gradient':
             algorithm = Algorithm(algorithm_type, parameters, GradientBoostingClassifier(**parameters))
+
+        elif algorithm_type == 'Bagging':
+            if "base_estimator" in parameters:
+                estimator_path = parameters["base_estimator"]
+                algorithm = AlgorithmFactory.get_all_algorithms(estimator_path)[0]
+                parameters["base_estimator"] = algorithm.algorithm
+            algorithm = Algorithm(algorithm_type, parameters, BaggingClassifier(**parameters))
+
+        elif algorithm_type == 'Voting':
+            if "estimators" in parameters:
+                estimator_path = parameters["estimators"]
+                algorithms = AlgorithmFactory.get_all_algorithms(estimator_path)
+                estimators = list()
+                for algorithm in algorithms:
+                    estimators.append((algorithm.name, algorithm.algorithm))
+                parameters["estimators"] = estimators
+            algorithm = Algorithm(algorithm_type, parameters, VotingClassifier(**parameters))
         else:
             print("Error: Invalid algorithm")
             sys.exit()
@@ -57,7 +75,6 @@ class AlgorithmFactory:
             all_runs = json.load(jf)
 
         algorithms = []
-        algorithm_names = []
 
         for algorithm in all_runs["algorithms"]:
             algorithms.append(AlgorithmFactory.get_algorithm(algorithm["algorithm"], algorithm["parameters"]))

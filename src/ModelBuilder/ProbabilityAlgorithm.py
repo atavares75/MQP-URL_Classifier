@@ -38,4 +38,4 @@ class ProbabilityAlgorithm:
 
         self.test_time = end_test - start_test
 
-        self.performance = AlgorithmPerformance(testing_set.urls, testing_set.labels, self.prediction, self.name)
+        self.performance = AlgorithmPerformance(testing_set.urls, testing_set.labels, self.prediction, self.name, autoGenerateMetrics=False)
