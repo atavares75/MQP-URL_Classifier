@@ -127,13 +127,13 @@ class AlgorithmPerformance:
         plt.title(self.algorithm + ' - Multi-class ROC Curve Plot')
         plt.legend(loc="lower right")
         return plt.gcf()
-		
+
     def calculateFalsePostiveRate(self):
         """
         :RETURN: returns the false positive rate
         """
         return self.FP / (self.FP + self.TN)
-	
+
     def calculateFalseNegativeRate(self):
         """
         :RETURN: returns the false negative rate

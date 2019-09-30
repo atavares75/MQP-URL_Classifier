@@ -5,6 +5,7 @@ from datetime import datetime
 
 from Metrics.AlgorithmPerformance import AlgorithmPerformance
 
+
 class Algorithm:
 
     def __init__(self, name, parameters, algorithm):

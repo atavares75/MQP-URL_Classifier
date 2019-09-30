@@ -1,11 +1,13 @@
 # Robert Dwan
 
-import json, sys, os
+import json
+import os
+import sys
+from datetime import datetime as dt
 
 from DataSet import DataSet
 from ModelBuilder.AlgorithmFactory import AlgorithmFactory as af
 from OutputGenerator import OutputGenerator
-from datetime import datetime as dt
 
 
 def main(json_file):

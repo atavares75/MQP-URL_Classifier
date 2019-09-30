@@ -35,6 +35,8 @@ Possible "metric" values are: accuracy, false_positive, and false_negative.
 using accuracy will provide the parameters that produce the greatest accuracy.  
 Using false_positive or false_negative will provide the parameters that produce the lowest average rate for the metric.  
 
+The algorithm(s) used must have a function called predict_proba() that outputs predicted class probabilities.
+
 # Command
 
 python ProbabilityMain.py <json_file>

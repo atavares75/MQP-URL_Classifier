@@ -1,7 +1,7 @@
 # Robert Dwan 
 
 import os, joblib
-import numpy as np
+import pandas as pd
 
 class OutputGenerator:
 
@@ -37,7 +37,7 @@ class OutputGenerator:
         false_neg_file.write("Incorrect Label: URL\n")
 
         correct = self.testing_set.labels
-        prediction = self.model.prediction
+        prediction = self.model.performance.prediction
         test_urls = self.testing_set.urls
 
         for i in range(len(correct)):
@@ -110,19 +110,23 @@ class OutputGenerator:
             self.print_samples(tpos_path, tneg_path, fpos_path, fneg_path, category)
 
     def print_probability_output(self, tags):
-        predictions = np.zeros(shape=(self.testing_set.labels.shape), dtype=object)
+        predictions = list()
         rows, columns = tags.shape
         for row in range(rows):
             truth = self.testing_set.labels[row]
-            prediction_correct = False
+            prediction_added = False
+            temp_prediction = None
             for column in range(columns):
                 if truth == tags[row][column]:
-                    prediction_correct = True
-                    predictions[row] = tags[row][column]
-                elif prediction_correct == False and tags[row][column] in self.model.algorithm.classes_:
-                    predictions[row] = tags[row][column]
-            if predictions[row] == 0:
-                predictions[row] = 'Normal'
+                    prediction_added = True
+                    temp_prediction = tags[row][column]
+                elif prediction_added == False and tags[row][column] in self.model.algorithm.classes_:
+                    prediction_added = True
+                    temp_prediction = tags[row][column]
+            if prediction_added == False:
+                predictions.append('Normal')
+            else:
+                predictions.append(temp_prediction)
         self.model.performance.set_prediction(predictions)
         self.model.performance.createConfusionMatrix()
         self.print_all()

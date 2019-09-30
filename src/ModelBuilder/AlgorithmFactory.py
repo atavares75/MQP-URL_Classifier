@@ -1,14 +1,15 @@
 # Robert Dwan 
 
-import json, sys
+import json
+import sys
 
 from ModelBuilder.Algorithm import Algorithm
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier, BaggingClassifier, \
     VotingClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.semi_supervised import LabelSpreading, LabelPropagation
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
-from sklearn.semi_supervised import LabelSpreading, LabelPropagation
 
 
 class AlgorithmFactory:

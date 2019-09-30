@@ -1,12 +1,14 @@
 # Robert Dwan
 
-import json, sys, os
+import json
+import os
+import sys
+from datetime import datetime as dt
 
+import numpy as np
 from DataSet import DataSet
 from ModelBuilder.ProbabilityAlgorithmFactory import ProbabilityAlgorithmFactory as af
 from OutputGenerator import OutputGenerator
-from datetime import datetime as dt
-import numpy as np
 
 
 def main(json_file):
@@ -71,7 +73,6 @@ def tag_predictions(threshold, model):
             if predicted_probs[row][column] >= threshold:
                 tags[row][column] = classes[column]
     return tags
-
 
 
 main(sys.argv[1])

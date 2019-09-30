@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.feature_selection import mutual_info_classif, f_classif, chi2
+from sklearn.feature_selection import f_classif, chi2
 
 
 class FeaturePerformance:

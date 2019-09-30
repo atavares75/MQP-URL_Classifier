@@ -24,7 +24,8 @@ class ProbabilityAlgorithmFactory:
         algorithm_names = []
 
         for algorithm in all_runs["algorithms"]:
-            algorithms.append(ProbabilityAlgorithmFactory.get_algorithm(algorithm["algorithm"], algorithm["parameters"]))
+            algorithms.append(
+                ProbabilityAlgorithmFactory.get_algorithm(algorithm["algorithm"], algorithm["parameters"]))
 
         return algorithms
 

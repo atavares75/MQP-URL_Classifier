@@ -1,11 +1,10 @@
 import json
+
 import pandas as pd
+from FeatureExtraction import functionSwitcher
+from FeatureExtraction.Extractor import Extractor
 from pandas import DataFrame
 from sklearn.preprocessing import LabelEncoder
-
-from FeatureExtraction import functionSwitcher
-
-from FeatureExtraction.Extractor import Extractor
 
 
 class FeatureSet:
@@ -65,8 +64,3 @@ class FeatureSet:
             encoded_df = obj_df
         new_df = pd.concat([other_df, encoded_df], axis=1)
         return new_df
-
-
-
-
-
