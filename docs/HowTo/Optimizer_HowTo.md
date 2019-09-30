@@ -25,10 +25,10 @@ The Optimizer.py script takes in a JSON config file and performs runs on an algo
 * "max"		- list of max values for the tuning parameters
 * "min"		- list of min values for the tuning parameters
 * "step"		- list of values the tuning parameter will increment by
-* "feature_set"	- path to the config file for the feature_set - see "feature_set_config.md" for more details
+* "feature_set"	- path to the config file for the feature_set - (See "config_format/feature_set_config.md" for more details)
 * "training_set"	- path to the csv file that contains the training data set
 * "testing_set"	- path to the csv file that contains the testing data set
-* "metric"	- the metric that the user specifies and will be outputted to a separate txt file
+* "metric"	- the metric that the user specifies and will be outputted to a separate text file
 
 Possible "metric" values are: accuracy, false_positive, and false_negative.  
 using accuracy will provide the parameters that produce the greatest accuracy.  

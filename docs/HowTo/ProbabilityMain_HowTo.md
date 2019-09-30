@@ -24,8 +24,8 @@ The ProbabilityMain.py script takes in a JSON config file and performs batch run
 }
 ```
 * "runs" - list of algorithms to run
-* "algorithm" - the path to the config file for an algorithm (See "algorithm_config_format.md" for more information)
-* "feature_set" - the path to the config file for a feature_set (See "feature_set_config_format.md" for more information)
+* "algorithm" - the path to the config file for an algorithm (See "config_format/algorithm_config_format.md" for more information)
+* "feature_set" - the path to the config file for a feature_set (See "config_format/feature_set_config_format.md" for more information)
 * "training_set" - the path to the .csv file for the training data set
 * "testing_set" - the path to the .csv file for the testing data set
 * "metric"	- the metric that the user specifies and will be outputted to a separate txt file

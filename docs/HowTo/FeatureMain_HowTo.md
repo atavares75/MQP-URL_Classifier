@@ -21,7 +21,7 @@ The FeatureMain.py script takes in a JSON config file and evaluates the features
 }
 ```
 * "feature_set" - list of feature sets to evaluate
-* "path" - the path to the config file for a feature_set (See "feature_set_config_format.md" for more information)
+* "path" - the path to the config file for a feature_set (See "config_format/feature_set_config_format.md" for more information)
 * "data_set" - the path to the .csv file for the data set
 * "metric"	- the metric the program will use to evaluate the features
 
