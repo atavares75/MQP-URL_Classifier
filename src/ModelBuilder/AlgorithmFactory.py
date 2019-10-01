@@ -5,7 +5,7 @@ import sys
 
 from ModelBuilder.Algorithm import Algorithm
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier, BaggingClassifier, \
-    VotingClassifier
+    VotingClassifier, ExtraTreesClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.semi_supervised import LabelSpreading, LabelPropagation
 from sklearn.svm import LinearSVC
@@ -33,7 +33,8 @@ class AlgorithmFactory:
             algorithm = Algorithm(algorithm_type, parameters, LabelSpreading(**parameters))
         elif algorithm_type == 'Propagation':
             algorithm = Algorithm(algorithm_type, parameters, LabelPropagation(**parameters))
-
+        elif algorithm_type == 'ExtraTrees':
+            algorithm = Algorithm(algorithm_type, parameters, ExtraTreesClassifier(**parameters))
         elif algorithm_type == 'AdaBoost':
             if "base_estimator" in parameters:
                 estimator_path = parameters["base_estimator"]

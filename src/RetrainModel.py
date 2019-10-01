@@ -5,7 +5,7 @@ import json
 import sys
 from DataSet import DataSet
 from ModelBuilder.Algorithm import Algorithm
-from OutputGenerator import OutputGenerator
+from OutputGenerator.OutputGenerator import OutputGenerator
 
 
 def main(json_file):

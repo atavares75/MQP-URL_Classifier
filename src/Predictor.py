@@ -1,14 +1,15 @@
 # Robert Dwan
 
+import json
+import os
+import sys
 from datetime import datetime as dt
 
 import joblib
-import json
-import os
 import pandas as pd
-import sys
 from DataSet import DataSet
 from ModelBuilder.Algorithm import Algorithm
+from OutputGenerator.OutputGenerator import output_path
 
 
 def main(json_file):
@@ -17,7 +18,7 @@ def main(json_file):
     :PARAM json_file: config file with model, feature_set, and data set
     """
     time = dt.now().strftime('%Y-%m-%d_%H-%M-%S')
-    path = "../../outputs/%s-PredictionRun" % time
+    path = output_path + "/%s-PredictionRun" % time
     os.mkdir(path)
 
     with open(json_file) as jf:

@@ -1,13 +1,12 @@
 # Robert Dwan
 
 import json
-import os
 import sys
 from datetime import datetime as dt
 
 from DataSet import DataSet
 from ModelBuilder.AlgorithmFactory import AlgorithmFactory as af
-from OutputGenerator import OutputGenerator
+from OutputGenerator.OutputGenerator import OutputGenerator
 
 
 def main(json_file):
@@ -17,8 +16,7 @@ def main(json_file):
     :PARAM json_file: the config file with algorithm, feature_set, and data_set information
     """
     time = dt.now().strftime('%Y-%m-%d_%H-%M-%S')
-    main_path = "../../outputs/%s-BatchRun" % time
-    os.mkdir(main_path)
+    main_path = "/%s-BatchRun" % time
 	
     with open(json_file) as jf:
         batch = json.load(jf)	
@@ -30,8 +28,6 @@ def main(json_file):
         metric = run["metric"]
 		
         path = "%s/Run%s" % (main_path, str(i))
-        os.mkdir(path)
-        file = open("%s/%s.txt" % (path, metric), "w")
 		
         algorithms = af.get_all_algorithms(run["algorithm"])
         print("HAVE ALGORITHMS")
@@ -47,15 +43,9 @@ def main(json_file):
         for algorithm in algorithms:
             print("Running Algorithm " + algorithm.name)
             algorithm.run(training_data_set, testing_data_set)
-            output = OutputGenerator(algorithm, testing_data_set, path)
-            output.print_all()
-            file.write("Algorithm name: " + algorithm.name)
-            file.write("\nParameter values are: " + str(algorithm.parameters))
-            file.write("\nRun ID: " + str(algorithm.id) + "\n")
-            file.write(metric + ":\n" + str(algorithm.performance.get_results(metric)))
-            file.write("\n\n")
-			
-        file.close()
+            output = OutputGenerator(algorithm, testing_data_set, path, metric)
+            output.print_algorithm_performance()
+
         i += 1
 
 main(sys.argv[1])

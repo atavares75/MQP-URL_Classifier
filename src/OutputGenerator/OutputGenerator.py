@@ -1,12 +1,14 @@
 # Robert Dwan 
 
-import joblib
 import os
+
+import joblib
+from OutputGenerator import output_path
 
 
 class OutputGenerator:
 
-    def __init__(self, model, testing_set, path):
+    def __init__(self, model, testing_set, path, metric):
         """
         The initializes the varibles in the OutputGenerator class
         :PARAM trainTest: the TrainTest object
@@ -14,7 +16,10 @@ class OutputGenerator:
         """
         self.model = model
         self.testing_set = testing_set
-        self.path = path
+        self.path = output_path + path
+        self.metric = metric
+        if not os.path.exists(self.path):
+            os.makedirs(self.path)
 
     def print_samples(self, tpos_path, tneg_path, fpos_path, fneg_path, label):
         """
@@ -110,6 +115,42 @@ class OutputGenerator:
         for category in categories:
             self.print_samples(tpos_path, tneg_path, fpos_path, fneg_path, category)
 
+    def print_algorithm_performance(self):
+        file = open("%s/%s.txt" % (self.path, self.metric), "a")
+        file.write("Algorithm name: " + self.model.name)
+        file.write("\nParameter values are: " + str(self.model.parameters))
+        file.write("\nRun ID: " + str(self.model.id) + "\n")
+        file.write(self.metric + ":\n" + str(self.model.performance.get_results(self.metric)))
+        file.write("\n\n")
+        file.close()
+        self.print_all()
+
+    def print_2d_optimized_output(self, tuning_params, i, j):
+
+        file = open("%s/Optimized_Results.txt" % self.path, "a")
+        file.write("Parameter values are: " + tuning_params[0] + ": " + str(i) + " and " + tuning_params[
+            1] + ": " + str(j) + "\n")
+        file.write("Run ID: " + str(self.model.id) + "\n")
+        file.write(self.metric + "\n" + str(self.model.performance.get_results(self.metric)))
+        file.write("\n\n")
+        self.print_all()
+
+    def print_1d_optimized_output(self, i):
+        file = open("%s/Optimized_Results.txt" % self.path, "a")
+        file.write("Parameter value is " + str(i) + "\n")
+        file.write("Run ID: " + str(self.model.id) + "\n")
+        file.write(self.metric + "\n" + str(self.model.performance.get_results(self.metric)))
+        file.write("\n\n")
+        self.print_all()
+
+    def print_optimized_parameters(self, best):
+        file = open("%s/Optimized_Results.txt" % self.path, "a")
+        file.write("Best parameter value is " + str(best[1]) + "\n")
+        file.write("Run ID: " + str(best[0].id) + "\n")
+        file.write(self.metric + "\n" + str(best[0].performance.get_results(self.metric)))
+        file.write("\n\n")
+        file.close()
+
     def print_probability_output(self, tags):
         predictions = list()
         rows, columns = tags.shape
@@ -130,4 +171,4 @@ class OutputGenerator:
                 predictions.append(temp_prediction)
         self.model.performance.set_prediction(predictions)
         self.model.performance.createConfusionMatrix()
-        self.print_all()
+        self.print_algorithm_performance()

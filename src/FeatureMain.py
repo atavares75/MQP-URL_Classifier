@@ -6,6 +6,7 @@ import uuid
 import pandas as pd
 from FeatureExtraction.FeatureExtraction import FeatureSet
 from Metrics.FeaturePerformance import FeaturePerformance
+from OutputGenerator.OutputGenerator import output_path
 from pandas import DataFrame
 
 
@@ -17,7 +18,7 @@ class FeatureEvaluation:
         fp = FeaturePerformance(fs, labels)
 
         label = uuid.uuid4()
-        path = "../../outputs/FeatureEvaluation_%s" % label
+        path = output_path + "/FeatureEvaluation_%s" % label
         if not os.path.exists(path):
             os.mkdir(path)
 
