@@ -14,7 +14,12 @@ The FeatureMain.py script takes in a JSON config file and evaluates the features
 		{
 			"path": "../../config/feature_set/feature_config_numerical.json",
 			"data_set": "../../data/full_5050_training_set.csv",
-			"metric": "f_classif"
+			"metric": "f-value"
+		},
+        {
+			"path": "../../config/feature_set/feature_config_lexical.json",
+			"data_set": "../../data/full_5050_training_set.csv",
+			"metric": "correlation"
 		}
 	]
 
@@ -25,9 +30,10 @@ The FeatureMain.py script takes in a JSON config file and evaluates the features
 * "data_set" - the path to the .csv file for the data set
 * "metric"	- the metric the program will use to evaluate the features
 
-Possible "metric" values are: chi2 and f_classif.  
+Possible "metric" values are: chi2, f-value and correlation.  
 Using chi2 will run a chi-squared test on the features provided.
-Using f_classif will run a ANOVA F-Value test on the features provided.
+Using f-value will run a ANOVA F-Value test on the features provided.
+Using correlation will produce a correlation heat map with the features provided.
 
 # Command
 

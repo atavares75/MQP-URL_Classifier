@@ -7,6 +7,7 @@ from ModelBuilder.Algorithm import Algorithm
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier, GradientBoostingClassifier, BaggingClassifier, \
     VotingClassifier, ExtraTreesClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
 from sklearn.semi_supervised import LabelSpreading, LabelPropagation
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
@@ -61,6 +62,8 @@ class AlgorithmFactory:
                     estimators.append((algorithm.name, algorithm.algorithm))
                 parameters["estimators"] = estimators
             algorithm = Algorithm(algorithm_type, parameters, VotingClassifier(**parameters))
+        elif algorithm_type == 'MLP':
+            algorithm = Algorithm(algorithm_type, parameters, MLPClassifier(**parameters))
         else:
             print("Error: Invalid algorithm")
             sys.exit()
@@ -82,28 +85,3 @@ class AlgorithmFactory:
             algorithms.append(AlgorithmFactory.get_algorithm(algorithm["algorithm"], algorithm["parameters"]))
 
         return algorithms
-
-    @staticmethod
-    def get_probability_algorithm(algorithm_type, parameters):
-        """
-        :PARAM type: the type of algorithm to be created
-        :PARAM parameters: the parameters to pass when creating the algorithm
-        :RETURN the created algorithm object
-        """
-        if algorithm_type == "RandomForest":
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, RandomForestClassifier(**parameters))
-        elif algorithm_type == "LogisticRegression":
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, LogisticRegression(**parameters))
-        elif algorithm_type == "SVM-L":
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, LinearSVC(**parameters))
-        elif algorithm_type == "SVM-RBF":
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, SVC(**parameters))
-        elif algorithm_type == 'Spreading':
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, LabelSpreading(**parameters))
-        elif algorithm_type == 'Propagation':
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, LabelPropagation(**parameters))
-        else:
-            print("Error: Invalid algorithm")
-            sys.exit()
-
-        return algorithm

@@ -1,5 +1,5 @@
 # Robert Dwan
-
+import copy
 import json
 import sys
 from datetime import datetime as dt
@@ -43,7 +43,7 @@ def main(json_file):
         while i <= maxs[0]:
             j = mins[1]
             while j <= maxs[1]:
-                temp_params = parameters.deepcopy()
+                temp_params = copy.deepcopy(parameters)
                 temp_params.update({tuning_params[0]: i, tuning_params[1]: j})
                 algorithm = af.get_algorithm(name, temp_params)
 
@@ -55,22 +55,22 @@ def main(json_file):
                 output = OutputGenerator(algorithm, testing_data_set, path, metric)
                 output.print_2d_optimized_output(tuning_params, i, j)
 
-                if metric == "accuracy" and algorithm.performance.get_results(metric) > best[0].performance.get_results(
-                        metric):
-                    best = [algorithm, [i, j]]
+                if metric == "accuracy":
+                    if algorithm.performance.get_results(metric) > best[0].performance.get_results(metric):
+                        best = [algorithm, [i, j]]
                 elif algorithm.performance.get_results(metric).values.mean() < best[0].performance.get_results(
                         metric).values.mean():
                     best = [algorithm, [i, j]]
 
-                j += steps[0]
+                j += steps[1]
 
-            i += steps[1]
+            i += steps[0]
 
         output.print_optimized_parameters(best)
     else:
         i = mins
         while i <= maxs:
-            temp_params = parameters.copy()
+            temp_params = copy.deepcopy(parameters)
             temp_params.update({tuning_params: i})
             algorithm = af.get_algorithm(name, temp_params)
 

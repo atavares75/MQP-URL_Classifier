@@ -1,9 +1,11 @@
 import json
 import sys
 
-from ModelBuilder.ProbabilityAlgorithm import ProbabilityAlgorithm
-from sklearn.ensemble import RandomForestClassifier
+from ModelBuilder.ProbabilityAlgorithm import ProbabilityAlgorithm as Algorithm
+from sklearn.ensemble import RandomForestClassifier, VotingClassifier, BaggingClassifier, GradientBoostingClassifier, \
+    AdaBoostClassifier, ExtraTreesClassifier
 from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
 from sklearn.semi_supervised import LabelSpreading, LabelPropagation
 from sklearn.svm import LinearSVC
 from sklearn.svm import SVC
@@ -37,17 +39,34 @@ class ProbabilityAlgorithmFactory:
         :RETURN the created algorithm object
         """
         if algorithm_type == "RandomForest":
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, RandomForestClassifier(**parameters))
+            algorithm = Algorithm(algorithm_type, parameters, RandomForestClassifier(**parameters))
         elif algorithm_type == "LogisticRegression":
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, LogisticRegression(**parameters))
-        elif algorithm_type == "SVM-L":
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, LinearSVC(**parameters))
-        elif algorithm_type == "SVM-RBF":
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, SVC(**parameters))
+            algorithm = Algorithm(algorithm_type, parameters, LogisticRegression(**parameters))
         elif algorithm_type == 'Spreading':
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, LabelSpreading(**parameters))
+            algorithm = Algorithm(algorithm_type, parameters, LabelSpreading(**parameters))
         elif algorithm_type == 'Propagation':
-            algorithm = ProbabilityAlgorithm(algorithm_type, parameters, LabelPropagation(**parameters))
+            algorithm = Algorithm(algorithm_type, parameters, LabelPropagation(**parameters))
+        elif algorithm_type == 'ExtraTrees':
+            algorithm = Algorithm(algorithm_type, parameters, ExtraTreesClassifier(**parameters))
+        elif algorithm_type == 'AdaBoost':
+            if "base_estimator" in parameters:
+                estimator_path = parameters["base_estimator"]
+                algorithm = ProbabilityAlgorithmFactory.get_all_algorithms(estimator_path)[0]
+                parameters["base_estimator"] = algorithm.algorithm
+            algorithm = Algorithm(algorithm_type, parameters, AdaBoostClassifier(**parameters))
+
+        elif algorithm_type == 'Gradient':
+            algorithm = Algorithm(algorithm_type, parameters, GradientBoostingClassifier(**parameters))
+
+        elif algorithm_type == 'Bagging':
+            if "base_estimator" in parameters:
+                estimator_path = parameters["base_estimator"]
+                algorithm = ProbabilityAlgorithmFactory.get_all_algorithms(estimator_path)[0]
+                parameters["base_estimator"] = algorithm.algorithm
+            algorithm = Algorithm(algorithm_type, parameters, BaggingClassifier(**parameters))
+
+        elif algorithm_type == 'MLP':
+            algorithm = Algorithm(algorithm_type, parameters, MLPClassifier(**parameters))
         else:
             print("Error: Invalid algorithm")
             sys.exit()

@@ -192,7 +192,7 @@ class Extractor:
     def checkForUsernameAndPassword(self):
         """
         Checks for username and password in URL
-        :return: 2 if both keywords present, 1 if only one is present, 0 if neither
+        :return: 2 if both are present, 1 if only one is present, 0 if neither
         """
         i = 0
         if self.parseResults.username is not None:

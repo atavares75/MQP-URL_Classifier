@@ -1,7 +1,7 @@
 # Robert Dwan 
 
 import os
-
+import pandas as pd
 import joblib
 from OutputGenerator import output_path
 
@@ -169,6 +169,10 @@ class OutputGenerator:
                 predictions.append('Normal')
             else:
                 predictions.append(temp_prediction)
+        t = pd.DataFrame(tags)
+        labels = pd.DataFrame(self.testing_set.labels)
+        df = pd.concat([labels, t], axis=1)
+        df.to_csv("%s/tags.csv" % self.path)
         self.model.performance.set_prediction(predictions)
         self.model.performance.createConfusionMatrix()
         self.print_algorithm_performance()
