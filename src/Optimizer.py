@@ -1,4 +1,3 @@
-# Robert Dwan
 import copy
 import json
 import sys

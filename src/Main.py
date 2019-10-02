@@ -1,5 +1,3 @@
-# Robert Dwan
-
 import json
 import sys
 from datetime import datetime as dt
@@ -17,18 +15,18 @@ def main(json_file):
     """
     time = dt.now().strftime('%Y-%m-%d_%H-%M-%S')
     main_path = "/%s-BatchRun" % time
-	
+
     with open(json_file) as jf:
-        batch = json.load(jf)	
-		
+        batch = json.load(jf)
+
     i = 0
     for run in batch["runs"]:
         print("HAVE JSON")
-		
+
         metric = run["metric"]
-		
+
         path = "%s/Run%s" % (main_path, str(i))
-		
+
         algorithms = af.get_all_algorithms(run["algorithm"])
         print("HAVE ALGORITHMS")
 
@@ -47,5 +45,6 @@ def main(json_file):
             output.print_algorithm_performance()
 
         i += 1
+
 
 main(sys.argv[1])

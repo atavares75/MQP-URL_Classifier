@@ -1,5 +1,3 @@
-# Robert Dwan
-
 import uuid
 from datetime import datetime
 

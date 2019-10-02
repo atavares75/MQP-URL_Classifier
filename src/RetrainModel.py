@@ -1,8 +1,7 @@
-# Robert Dwan
-
-import joblib
 import json
 import sys
+
+import joblib
 from DataSet import DataSet
 from ModelBuilder.Algorithm import Algorithm
 from OutputGenerator.OutputGenerator import OutputGenerator
