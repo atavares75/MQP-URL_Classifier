@@ -3,9 +3,11 @@ import json
 import sys
 from datetime import datetime as dt
 
+import numpy as np
 from DataSet import DataSet
 from ModelBuilder.AlgorithmFactory import AlgorithmFactory as af
 from OutputGenerator.OutputGenerator import OutputGenerator
+from pandas import DataFrame
 
 
 def main(json_file):
@@ -39,6 +41,11 @@ def main(json_file):
 
     if (len(tuning_params) == 2):
         i = mins[0]
+        x = int((maxs[0] - mins[0]) / steps[0] + 1)
+        y = int((maxs[1] - mins[1]) / steps[1] + 1)
+        length = x * y
+        arr = np.zeros(shape=(length, 3))
+        index = 0
         while i <= maxs[0]:
             j = mins[1]
             while j <= maxs[1]:
@@ -57,17 +64,23 @@ def main(json_file):
                 if metric == "accuracy":
                     if algorithm.performance.get_results(metric) > best[0].performance.get_results(metric):
                         best = [algorithm, [i, j]]
-                elif algorithm.performance.get_results(metric).values.mean() < best[0].performance.get_results(
-                        metric).values.mean():
-                    best = [algorithm, [i, j]]
-
+                    arr[index] = [i, j, algorithm.performance.get_results(metric)]
+                else:
+                    if algorithm.performance.get_results(metric).values.mean() < best[0].performance.get_results(
+                            metric).values.mean():
+                        best = [algorithm, [i, j]]
+                    arr[i, j] = [i, j, algorithm.performance.get_results(metric).values.mean()]
+                index += 1
                 j += steps[1]
-
             i += steps[0]
 
         output.print_optimized_parameters(best)
+        df = DataFrame(arr, columns=[tuning_params[0], tuning_params[1], metric])
+        output.print_2d_visual(df)
     else:
         i = mins
+        length = (maxs[0] - mins[0]) / steps[0] + 1
+        arr = np.zeros(shape=(length, 2))
         while i <= maxs:
             temp_params = copy.deepcopy(parameters)
             temp_params.update({tuning_params: i})
@@ -84,12 +97,17 @@ def main(json_file):
             if metric == "accuracy":
                 if algorithm.performance.get_results(metric) > best[0].performance.get_results(metric):
                     best = [algorithm, i]
-            elif algorithm.performance.get_results(metric).values.mean() < best[0].performance.get_results(
-                    metric).values.mean():
-                best = [algorithm, i]
+                arr.append((i, algorithm.performance.get_results(metric)))
+            else:
+                if algorithm.performance.get_results(metric).values.mean() < best[0].performance.get_results(
+                        metric).values.mean():
+                    best = [algorithm, i]
+                arr.append((i, algorithm.performance.get_results(metric).values.mean()))
 
             i += steps
         output.print_optimized_parameters(best)
+        df = DataFrame(arr, columns=[tuning_params, metric])
+        output.print_1d_visual(df)
 
 
 main(sys.argv[1])

@@ -3,7 +3,8 @@ import os
 import joblib
 import pandas as pd
 from OutputGenerator import output_path
-
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 class OutputGenerator:
 
@@ -62,12 +63,10 @@ class OutputGenerator:
         false_pos_file.close()
         false_neg_file.close()
 
-    def print_all(self):
+    def print_all(self, path):
         """
         Prints all output to a txt file, saves the ROC graph as a PNG, and saves the model
 		"""
-        path = "%s/%s_%s_Output" % (self.path, self.model.id, self.model.name)
-        os.mkdir(path)
 
         # Print Metrics to output file
         file = open("%s/metric_report.txt" % path, "w")
@@ -92,9 +91,6 @@ class OutputGenerator:
         # Save ROC graph to file
         fig = self.model.performance.generateROC()
         fig.savefig('%s/ROC_Graph.png' % path, bbox_inches='tight')
-
-        # Save model
-        joblib.dump(self.model.algorithm, '%s/model.joblib' % path)
 
         # Save samples of false positives and negatives and true positives and negatives
         categories = ['Normal', 'phish', 'malware', 'ransomware', 'BotnetC&C']
@@ -122,7 +118,11 @@ class OutputGenerator:
         file.write(self.metric + ":\n" + str(self.model.performance.get_results(self.metric)))
         file.write("\n\n")
         file.close()
-        self.print_all()
+        path = "%s/%s_%s_Output" % (self.path, self.model.id, self.model.name)
+        os.mkdir(path)
+        # Save model
+        joblib.dump(self.model.algorithm, '%s/model.joblib' % path)
+        self.print_all(path)
 
     def print_2d_optimized_output(self, tuning_params, i, j):
 
@@ -132,7 +132,10 @@ class OutputGenerator:
         file.write("Run ID: " + str(self.model.id) + "\n")
         file.write(self.metric + "\n" + str(self.model.performance.get_results(self.metric)))
         file.write("\n\n")
-        self.print_all()
+        file.close()
+        path = "%s/%s_%s_Output" % (self.path, self.model.id, self.model.name)
+        os.mkdir(path)
+        self.print_all(path)
 
     def print_1d_optimized_output(self, i):
         file = open("%s/Optimized_Results.txt" % self.path, "a")
@@ -140,7 +143,10 @@ class OutputGenerator:
         file.write("Run ID: " + str(self.model.id) + "\n")
         file.write(self.metric + "\n" + str(self.model.performance.get_results(self.metric)))
         file.write("\n\n")
-        self.print_all()
+        file.close()
+        path = "%s/%s_%s_Output" % (self.path, self.model.id, self.model.name)
+        os.mkdir(path)
+        self.print_all(path)
 
     def print_optimized_parameters(self, best):
         file = open("%s/Optimized_Results.txt" % self.path, "a")
@@ -149,6 +155,25 @@ class OutputGenerator:
         file.write(self.metric + "\n" + str(best[0].performance.get_results(self.metric)))
         file.write("\n\n")
         file.close()
+        # Save model
+        joblib.dump(best[0].algorithm, '%s/optimized_model.joblib' % self.path)
+
+    def print_2d_visual(self, df):
+        c = df.columns
+        h = df.pivot(c[0], c[1], c[2])
+        plt.clf()
+        sns.heatmap(h, cmap="YlGnBu")
+        fig = plt.gcf()
+        fig.savefig('%s/HeatMap.png' % self.path, bbox_inches='tight')
+        df.to_csv("%s/optimize_results.csv" % self.path)
+
+    def print_1d_visual(self, df, tuning_param):
+        plt.clf()
+        sns.set(style='darkgrid')
+        sns.lineplot(x=tuning_param, y=self.metric, data=df)
+        fig = plt.gcf()
+        fig.savefig('%s/OptimizationLineGraph.png' % self.path, bbox_inches='tight')
+        df.to_csv("%s/optimize_results.csv" % self.path)
 
     def print_probability_output(self, tags):
         predictions = list()
