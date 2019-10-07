@@ -91,6 +91,7 @@ class OutputGenerator:
         # Save ROC graph to file
         fig = self.model.performance.generateROC()
         fig.savefig('%s/ROC_Graph.png' % path, bbox_inches='tight')
+        plt.close()
 
         # Save samples of false positives and negatives and true positives and negatives
         categories = ['Normal', 'phish', 'malware', 'ransomware', 'BotnetC&C']
@@ -165,23 +166,33 @@ class OutputGenerator:
         sns.heatmap(h, cmap="YlGnBu")
         fig = plt.gcf()
         fig.savefig('%s/HeatMap.png' % self.path, bbox_inches='tight')
+        plt.close()
         df.to_csv("%s/optimize_results.csv" % self.path)
 
     def print_1d_visual(self, df, tuning_param):
+        axis = {
+            "accuracy": "Accuracy (%)",
+            "false_positive": "False Positive Rate (%)",
+            "false_negative": "False Negative Rate (%)"
+        }
         plt.clf()
         sns.set(style='darkgrid')
-        sns.lineplot(x=tuning_param, y=self.metric, data=df)
+        sns.lineplot(x=tuning_param, y=axis[self.metric], data=df)
         fig = plt.gcf()
         fig.savefig('%s/OptimizationLineGraph.png' % self.path, bbox_inches='tight')
+        plt.close()
         df.to_csv("%s/optimize_results.csv" % self.path)
 
     def print_probability_output(self, tags):
         predictions = list()
         rows, columns = tags.shape
+        false_positives = 0
+        false_negatives = 0
         for row in range(rows):
             truth = self.testing_set.labels[row]
             prediction_added = False
             temp_prediction = None
+            false_reading_added = False
             for column in range(columns):
                 if truth == tags[row][column]:
                     prediction_added = True
@@ -189,6 +200,13 @@ class OutputGenerator:
                 elif prediction_added == False and tags[row][column] in self.model.algorithm.classes_:
                     prediction_added = True
                     temp_prediction = tags[row][column]
+                if(false_reading_added is False):
+                    if truth == "Normal" and tags[row][column] != 0 and tags[row][column] != "Normal":
+                        false_reading_added = True
+                        false_positives += 1
+                    if truth != "Normal" and tags[row][column] != 0 and tags[row][column] == "Normal":
+                        false_reading_added = True
+                        false_negatives += 1
             if prediction_added == False:
                 predictions.append('Normal')
             else:
@@ -197,6 +215,10 @@ class OutputGenerator:
         labels = pd.DataFrame(self.testing_set.labels)
         df = pd.concat([labels, t], axis=1)
         df.to_csv("%s/tags.csv" % self.path)
+        false_file = open("%s/false_tags.txt" % self.path, "w")
+        false_file.write("Number of false positives: %i\n" % false_positives)
+        false_file.write("Number of false negatives: %i\n" % false_negatives)
+        false_file.close()
         self.model.performance.set_prediction(predictions)
         self.model.performance.createConfusionMatrix()
         self.print_algorithm_performance()

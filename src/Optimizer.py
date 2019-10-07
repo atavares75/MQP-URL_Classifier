@@ -69,7 +69,7 @@ def main(json_file):
                     if algorithm.performance.get_results(metric).values.mean() < best[0].performance.get_results(
                             metric).values.mean():
                         best = [algorithm, [i, j]]
-                    arr[i, j] = [i, j, algorithm.performance.get_results(metric).values.mean()]
+                    arr[index] = [i, j, algorithm.performance.get_results(metric).values.mean()]
                 index += 1
                 j += steps[1]
             i += steps[0]
@@ -79,8 +79,9 @@ def main(json_file):
         output.print_2d_visual(df)
     else:
         i = mins
-        length = (maxs[0] - mins[0]) / steps[0] + 1
+        length = int((maxs - mins) / steps + 1)
         arr = np.zeros(shape=(length, 2))
+        index = 0
         while i <= maxs:
             temp_params = copy.deepcopy(parameters)
             temp_params.update({tuning_params: i})
@@ -97,17 +98,22 @@ def main(json_file):
             if metric == "accuracy":
                 if algorithm.performance.get_results(metric) > best[0].performance.get_results(metric):
                     best = [algorithm, i]
-                arr.append((i, algorithm.performance.get_results(metric)))
+                arr[index] = [i, algorithm.performance.get_results(metric)]
             else:
                 if algorithm.performance.get_results(metric).values.mean() < best[0].performance.get_results(
                         metric).values.mean():
                     best = [algorithm, i]
-                arr.append((i, algorithm.performance.get_results(metric).values.mean()))
-
+                arr[index] = [i, algorithm.performance.get_results(metric).values.mean()]
+            index += 1
             i += steps
         output.print_optimized_parameters(best)
-        df = DataFrame(arr, columns=[tuning_params, metric])
-        output.print_1d_visual(df)
+        axis = {
+            "accuracy": "Accuracy (%)",
+            "false_positive": "False Positive Rate (%)",
+            "false_negative": "False Negative Rate (%)"
+        }
+        df = DataFrame(arr, columns=[tuning_params, axis[metric]])
+        output.print_1d_visual(df, tuning_params)
 
 
 main(sys.argv[1])
