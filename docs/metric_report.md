@@ -3,6 +3,7 @@
 The metric_report.txt file is created for each model and contains different metrics for the run.
 
 # Example Metric Report
+```txt
 Output for: RandomForest  
 
 Time to train: 0:00:09.939674  
@@ -47,6 +48,7 @@ true: malware       0.081814
 true: phish         0.176968
 true: ransomware    0.008016
 dtype: float64
+```
 
 # Description of Output
 
