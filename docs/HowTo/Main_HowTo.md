@@ -38,8 +38,7 @@ python Main.py <json_file>
 
 # Output
 
-Output is structured as 
-output  
+Output is structured in the output folder as  
   * {time} - BatchRun  
     * Run0  
     * Run1  
