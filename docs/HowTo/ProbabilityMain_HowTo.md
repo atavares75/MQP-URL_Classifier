@@ -40,3 +40,13 @@ The algorithm(s) used must have a function called predict_proba() that outputs p
 # Command
 
 python ProbabilityMain.py <json_file>
+
+# Output
+
+Output is structured in the output folder as  
+  * {time} - PredictionRun  
+    * Run0  
+    * Run1  
+		
+Within a RunX folder is the model, the list of false positives, false negatives, true positives, and true negatives, the metric report txt file, and the ROC curve.  
+Within a {time} - BatchRun folder is a .txt file containing the "metric" values from the configuration, a .txt file containing the false tags, and a .csv containing the tags for each url.

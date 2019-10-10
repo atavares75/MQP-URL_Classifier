@@ -51,11 +51,17 @@ def main(json_file):
         i += 1
 
 
-def tag_predictions(threshold, model):
-    predicted_probs = model.performance.prediction
+def tag_predictions(threshold, algorithm):
+    """
+    Given the threshold and model it creates an array of tags. A tag is given if the class probability is above the threshold.
+    :param threshold: float value between 0 and 1
+    :param algorithm: the Algorithm class object
+    :return: an array of tags. A tag is a string representing a URL category
+    """
+    predicted_probs = algorithm.performance.prediction
     rows, columns = predicted_probs.shape
     tags = np.zeros(shape=(rows, columns), dtype=object)
-    classes = model.algorithm.classes_
+    classes = algorithm.algorithm.classes_
     for row in range(rows):
         for column in range(columns):
             if predicted_probs[row][column] >= threshold:

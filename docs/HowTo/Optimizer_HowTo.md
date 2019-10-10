@@ -37,3 +37,26 @@ Using false_positive or false_negative will provide the parameters that produce 
 # Command
 
 python Optimizer.py <json_file>
+
+# Output
+
+For 1 Dimensional Optimization
+Output is structured in the output folder as  
+  * {time} - OptimizedRun  
+    * AlgorithmName_TuningParamValue  
+    * AlgorithmName_TuningParamValue  
+		
+Within a RunX folder is the list of false positives, false negatives, true positives, and true negatives, the metric report txt file, and the ROC curve.  
+Within a {time} - Optimized folder is a .txt file containing the "metric" values from the configuration, the optimized model,
+a line graph generated from the results, and a .csv file with the results.
+
+For 2 Dimensional Optimization
+Output is structured in the output folder as  
+  * {time} - OptimizedRun  
+    * AlgorithmName_FirstTuningParamValue_SecondTuningParamValue 
+    * AlgorithmName_FirstTuningParamValue_SecondTuningParamValue  
+		
+Within a RunX folder is the list of false positives, false negatives, true positives, and true negatives, the metric report txt file, and the ROC curve.  
+Within a {time} - Optimized folder is a .txt file containing the "metric" values from the configuration, the optimized model,
+a heat map generated from the results, and a .csv file with the results.
+

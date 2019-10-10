@@ -9,17 +9,17 @@ The FeatureMain.py script takes in a JSON config file and evaluates the features
 		{
 			"path": "../../config/feature_set/feature_config_categorical.json",
 			"data_set": "../../data/full_5050_training_set.csv",
-			"metric": "chi2"
+			"metric": "Chi-Squared"
 		},
 		{
 			"path": "../../config/feature_set/feature_config_numerical.json",
 			"data_set": "../../data/full_5050_training_set.csv",
-			"metric": "f-value"
+			"metric": "F-Test"
 		},
         {
 			"path": "../../config/feature_set/feature_config_lexical.json",
 			"data_set": "../../data/full_5050_training_set.csv",
-			"metric": "correlation"
+			"metric": "Correlation"
 		}
 	]
 
@@ -31,10 +31,20 @@ The FeatureMain.py script takes in a JSON config file and evaluates the features
 * "metric"	- the metric the program will use to evaluate the features
 
 Possible "metric" values are: chi2, f-value and correlation.  
-Using chi2 will run a chi-squared test on the features provided.
-Using f-value will run a ANOVA F-Value test on the features provided.
-Using correlation will produce a correlation heat map with the features provided.
+Using Chi-Squared will run a chi-squared test on the features provided.
+Using F-Test will run a ANOVA F-Value test on the features provided.
+Using Correlation will produce a correlation heat map with the features provided.
 
 # Command
 
 python FeatureMain.py <json_file>
+
+# Output
+
+Output is structured in the output folder as  
+  * {time} - FeatureEvaluation  
+    * Run0  
+    * Run1  
+		
+Within a RunX folder is report containing results of evaluation. If the metric is Chi-Squared or F-Test, a csv will be output
+ with the results of the evaluation. If the metric is correlation a correlation heat map will be output.

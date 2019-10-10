@@ -2,7 +2,7 @@ import json
 import os
 import sys
 import uuid
-
+from datetime import datetime as dt
 import pandas as pd
 from FeatureExtraction.FeatureExtraction import FeatureSet
 from Metrics.FeaturePerformance import FeaturePerformance
@@ -17,24 +17,17 @@ class FeatureEvaluation:
 
         fp = FeaturePerformance(fs, labels)
 
-        label = uuid.uuid4()
-
-        eval_path = path + "/%s_%s" % (metric, label)
-        if not os.path.exists(eval_path):
-            os.mkdir(eval_path)
-
-        if metric == "correlation":
+        if metric == "Correlation":
             heat_map = fp.buildCorrelationHeatMap()
-            heat_map.savefig('%s/HeatMap.png' % eval_path, bbox_inches='tight')
-            print(label)
+            heat_map.savefig('%s/%s-HeatMap.png' % (metric, path), bbox_inches='tight')
             return
 
-        file = open("%s/features_eval_%s.csv" % (eval_path, label), "w")
+        file = open("%s/features_eval_%s.csv" % (path, metric), "w")
 
-        if metric == "chi2":
+        if metric == "Chi-Squared":
             score, p_val = fp.calculateChiX_Score()
             score_name = "Chi-Score"
-        if metric == "f-value":
+        if metric == "F-Test":
             score, p_val = fp.calculateF_Value()
             score_name = "F-Value"
 
@@ -45,24 +38,28 @@ class FeatureEvaluation:
         df.to_csv(file)
 
         file.close()
-        print(label)
 
 
 def main(json_file):
     with open(json_file) as jf:
         run = json.load(jf)
 
-    label = uuid.uuid4()
-    path = output_path + "/FeatureEvaluation_%s" % label
+    time = dt.now().strftime('%Y-%m-%d_%H-%M-%S')
+    path = output_path + "/%s-FeatureEvaluation" % time
     if not os.path.exists(path):
         os.mkdir(path)
 
+
+    i = 0
     for feature in run["feature_set"]:
+        eval_path = path + "/%s_%s" % (metric, str(i))
+        if not os.path.exists(eval_path):
+            os.mkdir(eval_path)
         data = pd.read_csv(feature["data_set"])
         labels = data['label']
         urls = data['url']
         metric = feature["metric"]
-        FeatureEvaluation(feature["path"], urls, labels, metric, path)
+        FeatureEvaluation(feature["path"], urls, labels, metric, eval_path)
 
 
 main(sys.argv[1])
