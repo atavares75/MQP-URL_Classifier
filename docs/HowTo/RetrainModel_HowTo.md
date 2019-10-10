@@ -21,3 +21,7 @@ The Retrain.py script takes in a JSON config file containing a model, training s
 # Command
 
 python Retrain.py <json_file>
+
+# Output
+
+This script outputs the new model, the list of false positives, false negatives, true positives, and true negatives, the metric report txt file, and the ROC curve.

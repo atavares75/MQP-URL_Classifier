@@ -19,3 +19,7 @@ The Predictor.py script takes in a JSON config file containing a model, testing 
 # Command
 
 python Predictor.py <json_file>
+
+# Output
+
+A .csv file with the URL and its prediction
