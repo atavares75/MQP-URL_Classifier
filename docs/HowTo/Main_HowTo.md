@@ -40,9 +40,9 @@ python Main.py <json_file>
 
 Output is structured as 
 output  
-  *{time} - BatchRun  
-    *Run0  
-    *Run1  
+  * {time} - BatchRun  
+    * Run0  
+    * Run1  
 		
 Within a RunX folder is the model, the list of false positives, false negatives, true positives, and true negatives, the metric report txt file, and the ROC curve.  
 Within a {time} - BatchRun folder is a .txt file containing the "metric" values from the configuration
