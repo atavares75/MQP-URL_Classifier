@@ -37,28 +37,3 @@ class Algorithm:
         self.test_time = end_test - start_test
 
         self.performance = AlgorithmPerformance(testing_set.urls, testing_set.labels, self.prediction, self.name)
-
-
-    def runSpecial(self, train_features, train_labels, testing_features, testing_labels, urls):
-        """
-        This method runs the algorithm by train and testing it and get the performance object
-        :param train_features: array of features
-        :param train_labels: array of labels
-        :param testing_features: array of features
-        :param testing_labels: array of labels
-        :param urls: array of urls
-        :return:
-        """
-        start_train = datetime.now()
-        self.algorithm.fit(train_features, train_labels)
-        end_train = datetime.now()
-
-        self.train_time = end_train - start_train
-
-        start_test = datetime.now()
-        self.prediction = self.algorithm.predict(testing_features)
-        end_test = datetime.now()
-
-        self.test_time = end_test - start_test
-
-        self.performance = AlgorithmPerformance(urls, testing_labels, self.prediction, self.name)

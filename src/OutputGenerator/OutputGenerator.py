@@ -188,37 +188,6 @@ class OutputGenerator:
         plt.close()
         df.to_csv("%s/optimize_results.csv" % self.path)
 
-    def print_optimized_feature_output(self, i):
-        file = open("%s/Optimized_Results.txt" % self.path, "a")
-        file.write("K value is " + str(i) + "\n")
-        file.write("Run ID: " + str(self.model.id) + "\n")
-        file.write(self.metric + "\n" + str(self.model.performance.get_results(self.metric)))
-        file.write("\n\n")
-        file.close()
-        path = "%s/%s_%s_Output" % (self.path, self.model.id, self.model.name)
-        os.mkdir(path)
-        self.print_all(path)
-
-    def print_feature_optimization_visual(self, df, ranked_features):
-        """
-                Prints line chart of metric vs tuning parameter
-                :param df: data frame containing optimization values
-                :ranked_features: data frame containing ranked features
-                """
-        axis = {
-            "accuracy": "Accuracy (%)",
-            "false_positive": "False Positive Rate (%)",
-            "false_negative": "False Negative Rate (%)"
-        }
-        plt.clf()
-        sns.set(style='darkgrid')
-        sns.lineplot(x="k", y=axis[self.metric], data=df)
-        fig = plt.gcf()
-        fig.savefig('%s/OptimizationLineGraph.png' % self.path, bbox_inches='tight')
-        plt.close()
-        df.to_csv("%s/optimize_results.csv" % self.path)
-        ranked_features.to_csv("%s/ranked_features.csv" % self.path)
-
     def print_probability_output(self, tags):
         """
         Prints output for tagging algorithm
