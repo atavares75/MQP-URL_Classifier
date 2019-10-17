@@ -112,6 +112,10 @@ class OutputGenerator:
             self.print_samples(tpos_path, tneg_path, fpos_path, fneg_path, category)
 
     def print_algorithm_performance(self):
+        """
+        Prints performance of algorithm to text file
+        :return:
+        """
         file = open("%s/%s.txt" % (self.path, self.metric), "a")
         file.write("Algorithm name: " + self.model.name)
         file.write("\nParameter values are: " + str(self.model.parameters))
@@ -126,7 +130,13 @@ class OutputGenerator:
         self.print_all(path)
 
     def print_2d_optimized_output(self, tuning_params, i, j):
-
+        """
+        Prints 2d optimization result to text file
+        :param tuning_params: dict containing the parameters being optimized
+        :param i: value of first tuning param
+        :param j: value of second tuning param
+        :return: None
+        """
         file = open("%s/Optimized_Results.txt" % self.path, "a")
         file.write("Parameter values are: " + tuning_params[0] + ": " + str(i) + " and " + tuning_params[
             1] + ": " + str(j) + "\n")
@@ -139,6 +149,11 @@ class OutputGenerator:
         self.print_all(path)
 
     def print_1d_optimized_output(self, i):
+        """
+        Prints 1d optimization result to text file
+        :param i: value of parameter being optimized
+        :return: None
+        """
         file = open("%s/Optimized_Results.txt" % self.path, "a")
         file.write("Parameter value is " + str(i) + "\n")
         file.write("Run ID: " + str(self.model.id) + "\n")
@@ -150,6 +165,11 @@ class OutputGenerator:
         self.print_all(path)
 
     def print_optimized_parameters(self, best):
+        """
+        Prints parameters that performed the best
+        :param best: At list containing algorithm and optimized parameters
+        :return: None
+        """
         file = open("%s/Optimized_Results.txt" % self.path, "a")
         file.write("Best parameter value is " + str(best[1]) + "\n")
         file.write("Run ID: " + str(best[0].id) + "\n")
@@ -160,6 +180,11 @@ class OutputGenerator:
         joblib.dump(best[0].algorithm, '%s/optimized_model.joblib' % self.path)
 
     def print_2d_visual(self, df):
+        """
+        Prints heat map of accuracies between two tuning parameters
+        :param df: DataFrame containing optimization results
+        :return: None
+        """
         c = df.columns
         h = df.pivot(c[0], c[1], c[2])
         plt.clf()
@@ -172,8 +197,9 @@ class OutputGenerator:
     def print_1d_visual(self, df, tuning_param):
         """
         Prints line chart of metric vs tuning parameter
-        :param df: df containing optimization values
+        :param df: DataFrame containing optimization results
         :param tuning_param: the name of the tuning parameter
+        :return: None
         """
         axis = {
             "accuracy": "Accuracy (%)",
@@ -192,7 +218,7 @@ class OutputGenerator:
         """
         Prints output for tagging algorithm
         :param tags: an array of tags
-        :return: none
+        :return: None
         """
         predictions = list()
         rows, columns = tags.shape

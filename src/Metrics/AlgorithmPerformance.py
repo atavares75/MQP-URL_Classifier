@@ -154,4 +154,9 @@ class AlgorithmPerformance:
             return self.calculateFalseNegativeRate()
 
     def set_prediction(self, new):
+        """
+        Sets new prediction. Used for tagging method.
+        :param new: new prediction
+        :return: None
+        """
         self.prediction = pd.Series(new)

@@ -70,8 +70,8 @@ def featureSwitcher(ex, feature):
 
 def extractorSwitcher(extractor):
     """
-
-    :param extractor:
+    returns extractor class name as callable
+    :param extractor: extractor class name
     :return:
     """
     ExtractorSwitcher = {
