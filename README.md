@@ -1,7 +1,7 @@
 # MQP-URL_Classifier
 A framework designed to make testing and evaluation of machine learning algorithms for URL classification easier and more efficient.
 
-#Installation Guide
+# Installation Guide
 
 *Requires Python 3.7*
 1. Clone repository to desired folder
