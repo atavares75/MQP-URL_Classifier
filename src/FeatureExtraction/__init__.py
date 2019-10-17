@@ -20,6 +20,7 @@ for name in alexaSet:
     tokens = name.partition('.')
     alexaNameSet.add(tokens[0])
 
+from FeatureExtraction.Extractor import Extractor
 
 def featureSwitcher(ex, feature):
     """
@@ -65,3 +66,15 @@ def featureSwitcher(ex, feature):
                        }
     fun = FeatureSwitcher.get(feature)
     return fun
+
+
+def extractorSwitcher(extractor):
+    """
+
+    :param extractor:
+    :return:
+    """
+    ExtractorSwitcher = {
+        'Extractor': Extractor
+    }
+    return ExtractorSwitcher.get(extractor)
