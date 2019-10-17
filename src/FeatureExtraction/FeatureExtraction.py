@@ -1,7 +1,7 @@
 import json
 
 import pandas as pd
-from FeatureExtraction import functionSwitcher
+from FeatureExtraction import featureSwitcher
 from FeatureExtraction.Extractor import Extractor
 from pandas import DataFrame
 from sklearn.preprocessing import LabelEncoder
@@ -39,7 +39,7 @@ class FeatureSet:
             if type(url) is str:
                 ex = Extractor(url)
                 for feature in self.FeatureList:
-                    fun = functionSwitcher(ex, feature)
+                    fun = featureSwitcher(ex, feature)
                     if fun is None:
                         continue
                     else:

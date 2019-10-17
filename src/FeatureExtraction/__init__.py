@@ -21,7 +21,7 @@ for name in alexaSet:
     alexaNameSet.add(tokens[0])
 
 
-def functionSwitcher(ex, feature):
+def featureSwitcher(ex, feature):
     """
     Returns tuple of method name and parameters
     :param ex: the url Extractor object
