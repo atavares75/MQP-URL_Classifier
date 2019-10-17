@@ -12,7 +12,7 @@ if not os.path.exists('../../data/top-1m.csv'):
     z = zipfile.ZipFile(io.BytesIO(r.content))
     z.extractall('../../data/')
 d = pandas.read_csv('../../data/top-1m.csv', sep=',', header=None, names=['Domain'], index_col=0)
-alexaDict = d.to_dict('list')
+alexaDict = d.head(1000).to_dict('list')
 listOfDomains = list(alexaDict.values())
 alexaSet = set(listOfDomains[0])
 alexaNameSet = set()
@@ -20,8 +20,9 @@ for name in alexaSet:
     tokens = name.partition('.')
     alexaNameSet.add(tokens[0])
 
+from FeatureExtraction.Extractor import Extractor
 
-def functionSwitcher(ex, feature):
+def featureSwitcher(ex, feature):
     """
     Returns tuple of method name and parameters
     :param ex: the url Extractor object
@@ -29,37 +30,51 @@ def functionSwitcher(ex, feature):
     :return: tuple of method name and parameters
     """
     FeatureSwitcher = {'Length of URL': (ex.checkLengthOfURL, None),
-                       'Number of . in URL': (ex.countCharacterInURL, {'character': '.'}),
-                       'Number of @ in URL': (ex.countCharacterInURL, {'character': '@'}),
-                       'Count % in URL': (ex.countCharacterInPath, {'character': '%'}),
+                       'Length of path': (ex.checkLengthOfPath, None),
+                       'Length of hostname': (ex.checkLengthOfHostname, None),
+                       'Number . in URL': (ex.countCharacterInURL, {'character': '.'}),
+                       'Number @ in URL': (ex.countCharacterInURL, {'character': '@'}),
+                       'Number % in URL': (ex.countCharacterInPath, {'character': '%'}),
+                       'Number _ in URL': (ex.countCharacterInURL, {'character': '_'}),
+                       'Number ~ in URL': (ex.countCharacterInURL, {'character': '~'}),
+                       'Number & in URL': (ex.countCharacterInURL, {'character': '&'}),
+                       'Number # in URL': (ex.countCharacterInURL, {'character': '#'}),
+                       'Number - in hostname': (ex.checkForCharacterInHost, {'character': '-'}),
+                       'Number . in hostname': (ex.countCharacterInHost, {'character': '.'}),
+                       'Number - in path': (ex.countCharacterInPath, {'character': '-'}),
+                       'Number / in path': (ex.countCharacterInPath, {'character': '/'}),
+                       'Number = in path': (ex.countCharacterInPath, {'character': '='}),
+                       'Number ; in path': (ex.countCharacterInPath, {'character': ';'}),
+                       'Number , in path': (ex.countCharacterInPath, {'character': ','}),
+                       'Number . in path': (ex.countCharacterInPath, {'character': '.'}),
                        'Params in URL': (ex.checkForParams, None),
                        'Queries in URL': (ex.checkForQueries, None),
                        'Fragments in URL': (ex.checkForFragments, None),
-                       'Entropy of Domain name': (ex.calculateEntropyOfDomainName, None),
+                       'Entropy of hostname': (ex.calculateEntropyOfDomainName, None),
                        'Check for Non Standard port': (ex.checkNonStandardPort, None),
                        'Check Alexa Top 1 Million': (ex.checkAlexaTop1Million, None),
                        'Check for punycode': (ex.checkForPunycode, None),
                        'Check sub-domains': (ex.checkSubDomains, None),
-                       '- in domain name': (ex.checkForCharacterInHost, {'character': '-'}),
-                       'Digits in domain name': (ex.checkForDigitsInDomain, None),
-                       'Length of host': (ex.checkLengthOfHostname, None),
-                       'Count . in domain name': (ex.countCharacterInHost, {'character': '.'}),
-                       'IP based host name': (ex.checkForIPAddress, None),
-                       'Check TLD': (ex.checkTLD, None),
-                       'Length of path': (ex.checkLengthOfPath, None),
-                       'Count - in path': (ex.countCharacterInPath, {'character': '-'}),
-                       'Count / in path': (ex.countCharacterInPath, {'character': '/'}),
-                       'Count = in path': (ex.countCharacterInPath, {'character': '='}),
-                       'Count ; in path': (ex.countCharacterInPath, {'character': ';'}),
-                       'Count , in path': (ex.countCharacterInPath, {'character': ','}),
-                       'Count _ in path': (ex.countCharacterInPath, {'character': '_'}),
-                       'Count . in path': (ex.countCharacterInPath, {'character': '.'}),
-                       'Count & in path': (ex.countCharacterInPath, {'character': '&'}),
-                       'Username/Password in path': (ex.checkForUsernameAndPassword, None),
-                       'Check URL protocol': (ex.checkURLProtocol, None),
-                       'IP Address Location': (ex.addressLocation, None),
+                       'Number digits in hostname': (ex.countDigitsInDomain, None),
+                       'IP based hostname': (ex.checkForIPAddress, None),
+                       'Check TLD': (ex.checkCommonTLD, None),
+                       'Username/Password in URL': (ex.checkForUsernameAndPassword, None),
+                       'Check protocol': (ex.checkURLProtocol, None),
+                       'IP address location': (ex.addressLocation, None),
                        'Address Registry': (ex.addressRegistry, None),
-                       'Date Registered': (ex.dateRegistered, None)
+                       'Days Registered': (ex.dateRegistered, None)
                        }
     fun = FeatureSwitcher.get(feature)
     return fun
+
+
+def extractorSwitcher(extractor):
+    """
+
+    :param extractor:
+    :return:
+    """
+    ExtractorSwitcher = {
+        'Extractor': Extractor
+    }
+    return ExtractorSwitcher.get(extractor)

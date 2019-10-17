@@ -9,24 +9,39 @@ from sklearn.preprocessing import label_binarize
 
 class AlgorithmPerformance:
 
-    def __init__(self, test_urls, test_output, prediction, algorithm):
+    def __init__(self, test_urls, test_output, prediction, algorithm, autoGenerateMetrics=True):
         """
         Initializes parameters to generate algorithm performance metrics
         :param test_urls: the labeled input the model was tested with
         :param test_output: the labeled output model was tested with
         :param prediction: the predicted output of model
         :param algorithm: algorithm used by model (default is empty string)
+        :param autoGenerateMetrics: boolean value indicating if all metrics should be automatically generated
         """
         self.data_labels = np.unique(test_output)
         self.test_urls = test_urls
         self.test_output = test_output
         self.prediction = prediction
         self.algorithm = algorithm
+        if autoGenerateMetrics is True:
+            self.cmtx = self.createConfusionMatrix()
+
+            self.FP = self.cmtx.sum(axis=0) - np.diag(self.cmtx)
+            self.FN = self.cmtx.sum(axis=1) - np.diag(self.cmtx)
+            self.TP = np.diag(self.cmtx)
+            self.TN = self.cmtx.values.sum() - (self.FP.values.sum() + self.FN.values.sum() + self.TP.sum())
+        else:
+            self.cmtx = None
+
+            self.FP = None
+            self.FN = None
+            self.TP = None
+            self.TN = None
 
     def createConfusionMatrix(self):
         """
         Creates a confusion matrix from the predicted and actual output
-        :return: a data frame with the confusion matrix and labelled rows and column
+        :return: a data frame with the confusion matrix and labeled rows and column
         """
         c_matrix = confusion_matrix(self.test_output, self.prediction, self.data_labels)
         idx = list()
@@ -34,8 +49,12 @@ class AlgorithmPerformance:
         for label in self.data_labels:
             idx.append('true: ' + label)
             c.append('pred: ' + label)
-        cmtx = pd.DataFrame(c_matrix, index=idx, columns=c)
-        return cmtx
+        self.cmtx = pd.DataFrame(c_matrix, index=idx, columns=c)
+        self.FP = self.cmtx.sum(axis=0) - np.diag(self.cmtx)
+        self.FN = self.cmtx.sum(axis=1) - np.diag(self.cmtx)
+        self.TP = np.diag(self.cmtx)
+        self.TN = self.cmtx.values.sum() - (self.FP.values.sum() + self.FN.values.sum() + self.TP.sum())
+        return self.cmtx
 
     def createClassificationReport(self):
         """
@@ -108,3 +127,31 @@ class AlgorithmPerformance:
         plt.title(self.algorithm + ' - Multi-class ROC Curve Plot')
         plt.legend(loc="lower right")
         return plt.gcf()
+
+    def calculateFalsePostiveRate(self):
+        """
+        :RETURN: returns the false positive rate
+        """
+        return self.FP / (self.FP + self.TN)
+
+    def calculateFalseNegativeRate(self):
+        """
+        :RETURN: returns the false negative rate
+        """
+        return self.FN / (self.TP + self.FN)
+
+    def get_results(self, metric):
+        """
+        This method returns the wanted metric inputted by the user
+        :PARAM metric: the wanted metric inputed by the user
+        :RETURN: the value of the wanted metric
+        """
+        if metric == "accuracy":
+            return self.calculateAccuracy()
+        elif metric == "false_positive":
+            return self.calculateFalsePostiveRate()
+        elif metric == "false_negative":
+            return self.calculateFalseNegativeRate()
+
+    def set_prediction(self, new):
+        self.prediction = pd.Series(new)

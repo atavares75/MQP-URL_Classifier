@@ -4,7 +4,7 @@ from datetime import datetime
 from Metrics.AlgorithmPerformance import AlgorithmPerformance
 
 
-class Algorithm:
+class ProbabilityAlgorithm:
 
     def __init__(self, name, parameters, algorithm):
         """
@@ -31,9 +31,10 @@ class Algorithm:
         self.train_time = end_train - start_train
 
         start_test = datetime.now()
-        self.prediction = self.algorithm.predict(testing_set.features)
+        self.prediction = self.algorithm.predict_proba(testing_set.features)
         end_test = datetime.now()
 
         self.test_time = end_test - start_test
 
-        self.performance = AlgorithmPerformance(testing_set.urls, testing_set.labels, self.prediction, self.name)
+        self.performance = AlgorithmPerformance(testing_set.urls, testing_set.labels, self.prediction, self.name,
+                                                autoGenerateMetrics=False)

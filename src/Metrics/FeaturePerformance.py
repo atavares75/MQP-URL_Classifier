@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.feature_selection import mutual_info_classif, f_classif, chi2
+from sklearn.feature_selection import f_classif, chi2
 
 
 class FeaturePerformance:
@@ -16,7 +16,8 @@ class FeaturePerformance:
 
     def calculateF_Value(self):
         """
-        Calculates ANOVA F-value for the features
+        Calculates ANOVA F-value for the features.
+        Wrapper for scikit learn f_classif function.
         :return: tuple of the set of f-values and a set of p-values
         """
         f_test, p_test = f_classif(self.features.df.to_numpy(), self.labeled_output)
@@ -25,23 +26,25 @@ class FeaturePerformance:
     def calculateChiX_Score(self):
         """
         Computes chi-squared stats between each non-negative feature and class.
+        Wrapper for scikit learn chi2 function.
         :return: tuple containing chi2 statistics of each feature and p-values of each feature
         """
         chi_score, p_val = chi2(self.features.df.to_numpy(), self.labeled_output)
         return chi_score, p_val
 
-    def calculateMutualInformation(self):
-        """
-        Estimates mutual information for a discrete target variable
-        :return: Estimated mutual information between each feature and the target
-        """
-        mi = mutual_info_classif(self.features.df.to_numpy(), self.labeled_output)
-        return mi
+    # def calculateMutualInformation(self):
+    #     """
+    #     Estimates mutual information for a discrete target variable.
+    #     Wrapper for scikit learn mutual_info_classif function.
+    #     :return: Estimated mutual information between each feature and the target
+    #     """
+    #     mi = mutual_info_classif(self.features.df.to_numpy(), self.labeled_output)
+    #     return mi
 
     # def generateFeaturePlots(self, f_test, mutual_info, chi_score):
     #     """
     #     Creates a plot for each of the features in the feature set with their f-value, estimated mutual information,
-    #     and chi-squared statistic
+    #     and chi-squared statistic.
     #     :param f_test: f-values
     #     :param mutual_info: estimated mutual information between each feature and the target
     #     :param chi_score: chi-squared statistic for each feature
@@ -61,7 +64,7 @@ class FeaturePerformance:
 
     def buildCorrelationHeatMap(self):
         """
-        Creates a heat map of the correlations between all the features
+        Creates a heat map of the correlations between all the features.
         :return: a plot containing the heat map
         """
         correlation = self.features.df.corr(method='kendall')

@@ -1,11 +1,9 @@
 import json
+
 import pandas as pd
+from FeatureExtraction import featureSwitcher, extractorSwitcher
 from pandas import DataFrame
 from sklearn.preprocessing import LabelEncoder
-
-from FeatureExtraction import functionSwitcher
-
-from FeatureExtraction.Extractor import Extractor
 
 
 class FeatureSet:
@@ -24,8 +22,10 @@ class FeatureSet:
         self.FeatureList = list()
         for feature in selectedFeatures["FeatureList"]:
             self.FeatureList.append(feature["Feature"])
+        extractor = selectedFeatures["Extractor"]
+        self.Extractor = extractorSwitcher(extractor)
         self.df = self.__extractFeatures(url_list)
-        self.columnNames = self.FeatureList.copy()
+
 
     def __extractFeatures(self, url_list):
         """
@@ -39,9 +39,9 @@ class FeatureSet:
             i = i + 1
             data_point = list()
             if type(url) is str:
-                ex = Extractor(url)
+                ex = self.Extractor(url)
                 for feature in self.FeatureList:
-                    fun = functionSwitcher(ex, feature)
+                    fun = featureSwitcher(ex, feature)
                     if fun is None:
                         continue
                     else:
@@ -65,10 +65,4 @@ class FeatureSet:
         else:
             encoded_df = obj_df
         new_df = pd.concat([other_df, encoded_df], axis=1)
-        self.columnNames = new_df.columns
         return new_df
-
-
-
-
-
