@@ -16,7 +16,7 @@ matplotlib == 3.1.1
 # src/DataSet.py: 3
 # src/Metrics/AlgorithmPerformance.py: 4
 # src/ProbabilityMain.py: 8
-numpy == 1.17.1
+numpy == 1.22.0
 
 # src/DataSet.py: 4
 # src/FeatureExtraction/FeatureExtraction.py: 3,6
