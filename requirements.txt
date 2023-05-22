@@ -27,7 +27,7 @@ numpy == 1.17.1
 pandas == 0.25.1
 
 # src/FeatureExtraction/__init__.py: 6
-requests == 2.22.0
+requests == 2.31.0
 
 # src/FeatureExtraction/FeatureExtraction.py: 7
 # src/Metrics/AlgorithmPerformance.py: 6,7
